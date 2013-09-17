@@ -1,0 +1,16 @@
+#! /bin/sh
+
+# This script checks to see if the root password has been set for the first time,
+# and, if so, activates http authentication
+
+PASSWD_STATUS=`cat /etc/shadow | grep root | cut -d : -f 2,3`
+PASSWD_PRESET=`uci get secn.http.pw_preset`
+
+if [ $PASSWD_STATUS != "x:0" ] && [ $PASSWD_PRESET = "0" ]; then
+  uci set secn.http.pw_preset="1"
+  uci set secn.http.auth="checked"
+  uci set uhttpd.main.config="/etc/http.conf"
+  uci commit secn
+  uci commit uhttpd
+fi
+      

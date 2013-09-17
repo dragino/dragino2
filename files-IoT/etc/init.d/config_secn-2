@@ -1,0 +1,45 @@
+
+#!/bin/sh -x
+# /etc/init.d/config_secn-2
+
+# This is the second part of config_secn which is run at the end of the start up sequence
+
+
+# ------------------------------------------------------------------
+
+# Start or stop Asterisk now and enable on boot up if required
+ENABLE_AST=`uci get secn.asterisk.enable_ast`
+if [ $ENABLE_AST = "checked" ]; then
+    /etc/init.d/asterisk start
+    /etc/init.d/asterisk enable
+else
+    /etc/init.d/asterisk stop
+    rm /etc/rc.d/S99asterisk
+fi
+
+#---------------------------------------------
+
+# Start or stop dnsmasq now and enable on boot up as required
+DHCP_ENABLE=`uci get secn.dhcp.enable`
+if [ $DHCP_ENABLE = "checked" ]; then
+
+  # Enable start on boot
+  /etc/init.d/dnsmasq enable
+
+  # Stop dnsmasq now in case settings have changed
+  /etc/init.d/dnsmasq stop
+  # Start dnsmasq now
+  /etc/init.d/dnsmasq start
+
+else
+
+  # Disable start on boot
+  rm -f /etc/rc.d/S60dnsmasq
+
+  # Stop dnsmasq now
+  /etc/init.d/dnsmasq stop
+fi
+
+#---------------------------------------------
+
+

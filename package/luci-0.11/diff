@@ -1,0 +1,23 @@
+*** /home/edwin/Desktop/openwrt/package/luci-0.11/modules/admin-full/luasrc/view/admin_status/index.htm	2013-07-10 18:26:21.007224757 +0800
+--- /home/edwin/Desktop/index.htm	2013-07-17 15:01:39.520972256 +0800
+***************
+*** 510,519 ****
+  		<tr><td width="33%"><%:Router Name%></td><td><%=luci.sys.hostname() or "?"%></td></tr>
+  		<tr><td width="33%"><%:Router Model%></td><td><%=pcdata(model or "?")%></td></tr>
+  		<tr><td width="33%"><%:Firmware Version%></td><td>
+! 			<%=pcdata(luci.version.distname)%> <%=pcdata(luci.version.distversion)%> /
+! 			<%=pcdata(luci.version.luciname)%> (<%=pcdata(luci.version.luciversion)%>)
+  		</td></tr>
+- 		<tr><td width="33%"><%:Kernel Version%></td><td><%=luci.sys.exec("uname -r")%></td></tr>
+  		<tr><td width="33%"><%:Local Time%></td><td id="localtime">-</td></tr>
+  		<tr><td width="33%"><%:Uptime%></td><td id="uptime">-</td></tr>
+  		<tr><td width="33%"><%:Load Average%></td><td id="loadavg">-</td></tr>
+--- 510,517 ----
+  		<tr><td width="33%"><%:Router Name%></td><td><%=luci.sys.hostname() or "?"%></td></tr>
+  		<tr><td width="33%"><%:Router Model%></td><td><%=pcdata(model or "?")%></td></tr>
+  		<tr><td width="33%"><%:Firmware Version%></td><td>
+! 			<%=pcdata(luci.version.vendordist)%> 
+  		</td></tr>
+  		<tr><td width="33%"><%:Local Time%></td><td id="localtime">-</td></tr>
+  		<tr><td width="33%"><%:Uptime%></td><td id="uptime">-</td></tr>
+  		<tr><td width="33%"><%:Load Average%></td><td id="loadavg">-</td></tr>

@@ -1,0 +1,10 @@
+To set up a customized OpenWRT build environment for Dragino v2 projects, just run:
+. ./set_up_build_enviroment.sh /your/preferred/backfire/installation/path
+
+Then run:
+./build_image.sh /your/preferred/backfire/installation/path
+
+to compile the firmware for Dragino v2. you will get the firmware in
+the image folder
+
+Have Fun!

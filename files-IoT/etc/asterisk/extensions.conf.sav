@@ -1,0 +1,303 @@
+; /etc/asterisk/extensions.conf - Asterisk dial plan for SECN TL-WR703N
+;------------------------------------------------------------------------
+
+[general]
+static=yes
+writeprotect=no
+clearglobalvars=no
+
+[globals]
+
+
+[default]
+
+; External SIP / VoIP Provider definitions
+; This include file is generated automatically by Config web interface
+; You may comment out this #include line if using custom settings file #include below to avoid conflicts
+;---------------------------------
+#include "potato.extensions.conf"
+
+; Custom additions
+; This include is file for custom / additional settings and is intended to be edited by the user.
+#include "potato.custom.extensions.conf"
+
+; Abbreviated Dialling
+;---------------------
+; Using last octet of device IP address (1,2 or 3 digit)
+; The #include file is automatically generated with device IP address as follows:
+;exten => _X,1,Dial(SIP/4000@10.130.1.${EXTEN})
+;exten => _XX,1,Dial(SIP/4000@10.130.1.${EXTEN})
+;exten => _XXX,1,Dial(SIP/4000@10.130.1.${EXTEN})
+#include "lastoctet.extensions.conf"
+
+; Full a*b*c*d IP dialling, e.g. 10*130*1*144*
+;---------------------------------------------
+exten => _X*.,1,Set(OCTETS=${EXTEN})
+exten => _X*.,n,Set(IP=${CUT(OCTETS,*,1)}.${CUT(OCTETS,*,2)}.${CUT(OCTETS,*,3)}.${CUT(OCTETS,*,4)})
+exten => _X*.,n,Dial(SIP/4000@${IP})
+exten => _XX*.,1,Set(OCTETS=${EXTEN})
+exten => _XX*.,n,Set(IP=${CUT(OCTETS,*,1)}.${CUT(OCTETS,*,2)}.${CUT(OCTETS,*,3)}.${CUT(OCTETS,*,4)})
+exten => _XX*.,n,Dial(SIP/4000@${IP})
+exten => _XXX*.,1,Set(OCTETS=${EXTEN})
+exten => _XXX*.,n,Set(IP=${CUT(OCTETS,*,1)}.${CUT(OCTETS,*,2)}.${CUT(OCTETS,*,3)}.${CUT(OCTETS,*,4)})
+exten => _XXX*.,n,Dial(SIP/4000@${IP})
+
+; Default handling for incoming call.
+exten => 4000,1,Dial(MP/1)
+
+; Echo test
+;----------
+exten => 4001,1,Answer
+exten => 4001,2,Echo
+
+; Main IVR menu - M-E-N-U (6368)
+;------------------------------
+;exten => 6368,1,Goto(main-menu,9999,1)
+
+; Read out Wireless IP (2661)
+;-----------------------------
+exten => 2661,1,Answer
+exten => 2661,2,Background(read-ath0-ip)
+exten => 2661,3,System(/user/bin/getathip)                                                              
+exten => 2661,4,AGI(/etc/asterisk/scripts/readfile.sh,octet,/tmp/octet1,15)
+exten => 2661,5,SayNumber(${octet})
+exten => 2661,6,SayAlpha(.)
+exten => 2661,7,AGI(/etc/asterisk/scripts/readfile.sh,octet,/tmp/octet2,15)
+exten => 2661,8,SayNumber(${octet}) 
+exten => 2661,9,SayAlpha(.)
+exten => 2661,10,AGI(/etc/asterisk/scripts/readfile.sh,octet,/tmp/octet3,15)
+exten => 2661,11,SayNumber(${octet})
+exten => 2661,12,SayAlpha(.) 
+exten => 2661,13,AGI(/etc/asterisk/scripts/readfile.sh,octet,/tmp/octet4,15)
+exten => 2661,14,SayNumber(${octet})   
+exten => 2661,15,Playback(privacy-thankyou)
+
+
+; Configure abbreviated unique IP address (2662)             
+;-----------------------------------------------                                           
+exten => 2662,1,Answer
+; Enter pin number
+exten => 2662,2,Playback(enter-pin)
+exten => 2662,3,Read(pin,,4)
+exten => 2662,4,SayDigits(${pin})
+exten => 2662,5,System(/bin/echo "${pin}" > /tmp/pin.txt)
+; Enter octet
+exten => 2662,6,Playback(enter-last-octet)              
+exten => 2662,7,Read(newip,,3)                  
+exten => 2662,8,SayDigits(${newip})             
+exten => 2662,9,System(/bin/echo "${newip}" > /tmp/newip.txt)
+exten => 2662,10,System(/user/bin/setabbrnewip.sh)
+exten => 2662,11,Playback(result)
+  
+
+; Configure unique IP address C-O-N-F (2663)
+;------------------------------------------
+exten => 2663,1,Answer
+; Enter pin number
+exten => 2663,2,Playback(enter-pin)
+exten => 2663,3,Read(pin,,4)
+exten => 2663,4,SayDigits(${pin})
+exten => 2663,5,System(/bin/echo "${pin}" > /tmp/pin.txt)
+; Enter IP number
+exten => 2663,6,Playback(enter-ip)
+exten => 2663,7,Read(newip,,15)
+exten => 2663,8,SayDigits(${newip})
+exten => 2663,9,System(/bin/echo "${newip}" > /tmp/newip.txt)
+exten => 2663,10,System(/user/bin/setnewip.sh)
+exten => 2663,11,Playback(result)
+
+; Read out Ethernet IP (2664)
+;---------------------------
+exten => 2664,1,Answer                                                                          
+exten => 2664,2,Background(read-eth0-ip)
+exten => 2664,3,System(/user/bin/getethip)                                       
+exten => 2664,4,AGI(/etc/asterisk/scripts/readfile.sh,octet,/tmp/octet1,15)                                                         
+exten => 2664,5,SayNumber(${octet})                                               
+exten => 2664,6,SayAlpha(.)                                  
+exten => 2664,7,AGI(/etc/asterisk/scripts/readfile.sh,octet,/tmp/octet2,15)                                               
+exten => 2664,8,SayNumber(${octet}) 
+exten => 2664,9,SayAlpha(.)                                  
+exten => 2664,10,AGI(/etc/asterisk/scripts/readfile.sh,octet,/tmp/octet3,15)
+exten => 2664,11,SayNumber(${octet})                                                    
+exten => 2664,12,SayAlpha(.)
+exten => 2664,13,AGI(/etc/asterisk/scripts/readfile.sh,octet,/tmp/octet4,15)                            
+exten => 2664,14,SayNumber(${octet})                                              
+exten => 2664,15,Playback(privacy-thankyou)   
+
+; Read out signal rssi (7774) strength
+;------------------------------------
+exten => 7774,1,Answer
+exten => 7774,2,Playback(short-rssi)
+exten => 7774,3,System(/user/bin/rssi-adv)
+exten => 7774,4,AGI(/etc/asterisk/scripts/readfile.sh,counter,/tmp/counter,15)
+exten => 7774,5,Set(i=1)
+exten => 7774,6,While($[${i} < ${counter}])
+exten => 7774,7,Playback(/tmp/node)
+exten => 7774,8,SayNumber(${i})
+exten => 7774,9,Playback(silence/1)
+exten => 7774,10,AGI(/etc/asterisk/scripts/readfile.sh,rssi,/tmp/rssi${i},15)
+exten => 7774,11,SayNumber(${rssi})
+exten => 7774,12,Playback(silence/2) 
+exten => 7774,13,Set(i=$[${i} + 1])
+exten => 7774,14,EndWhile()
+exten => 7774,15,Goto(7774,3)
+
+; Reset Asterisk (9999)
+;------------------------------------
+exten =>  9999,1,Answer
+; Enter pin number
+exten => 9999,2,Playback(enter-pin)
+exten => 9999,3,Read(pin,,4)
+exten => 9999,4,SayDigits(${pin})
+; Enter confirmation of restart
+exten => 9999,5,Playback(confirm-asterisk-restart)
+exten => 9999,6,Read(confirm,,1)
+exten => 9999,7,SayDigits(${confirm})
+exten => 9999,8,System(/bin/echo "${pin} ${confirm}" > /tmp/restart.txt)
+exten => 9999,9,System(/user/bin/restartasterisk.sh)
+exten => 9999,10,Playback(result)
+
+; Set root password PASS (7277)
+;------------------------------------
+exten => 7277,1,Answer
+; Enter pin number
+exten => 7277,2,Playback(enter-pin)
+exten => 7277,3,Read(pin,,4)
+exten => 7277,4,SayDigits(${pin})
+; Enter password twice
+exten => 7277,5,Playback(enter-password)
+exten => 7277,6,Read(pass1,,16)
+exten => 7277,7,SayDigits(${pass1})
+exten => 7277,8,Playback(enter-password)
+exten => 7277,9,Read(pass2,,16)
+exten => 7277,10,SayDigits(${pass2})
+exten => 7277,11,System(/bin/echo "${pin} ${pass1} ${pass2}" > /tmp/passwd.txt)
+exten => 7277,12,System(/user/bin/setpasswd.sh)
+exten => 7277,13,Playback(result)
+
+; Set IVR PIN code PINN(7466)
+;------------------------------------
+exten => 7466,1,Answer
+; Enter pin number
+exten => 7466,2,Playback(enter-pin)
+exten => 7466,3,Read(pin,,4)
+exten => 7466,4,SayDigits(${pin})
+; Enter new pin number
+exten => 7466,5,Playback(enter-ivr-pin)
+exten => 7466,6,Read(pinn1,,4)
+exten => 7466,7,SayDigits(${pinn1})
+exten => 7466,8,Playback(enter-ivr-pin)
+exten => 7466,9,Read(pinn2,,4)
+exten => 7466,10,SayDigits(${pinn2})
+exten => 7466,11,System(/bin/echo "${pin} ${pinn1} ${pinn2}" > /tmp/setpinnum.txt)
+exten => 7466,12,System(/user/bin/setpinnum.sh)
+exten => 7466,13,Playback(result)
+
+; Set WiFi passphrase WIFI (9434)
+;------------------------------------
+exten => 9434,1,Answer
+; Enter pin number
+exten => 9434,2,Playback(enter-pin)
+exten => 9434,3,Read(pin,,4)
+exten => 9434,4,SayDigits(${pin})
+; Enter passcode twice
+exten => 9434,5,Playback(enter-passcode)
+exten => 9434,6,Read(passcode1,,16)
+exten => 9434,7,SayDigits(${passcode1})
+exten => 9434,8,Playback(enter-passcode)
+exten => 9434,9,Read(passcode2,,16)
+exten => 9434,10,SayDigits(${passcode2})
+exten => 9434,11,System(/bin/echo "${pin} ${passcode1} ${passcode2}" > /tmp/setpasscode.txt)
+exten => 9434,12,System(/user/bin/setpasscode.sh)
+exten => 9434,13,Playback(result)
+
+; Reset configuration to defaults RESET (73738) Press 1 to confirm.
+;------------------------------------
+exten => 73738,1,Answer
+; Enter pin number
+exten => 73738,2,Playback(enter-pin)
+exten => 73738,3,Read(pin,,4)
+exten => 73738,4,SayDigits(${pin})
+; Enter confirmation of reset
+exten => 73738,5,Playback(confirm-reset)
+exten => 73738,6,Read(confirm,,1)
+exten => 73738,7,SayDigits(${confirm})
+exten => 73738,8,System(/bin/echo "${pin} ${confirm}" > /tmp/reset.txt)
+exten => 73738,9,System(/user/bin/resetconfig.sh)
+exten => 73738,10,Playback(result)
+
+; Set Gateway IP address last octet GATE (4283) Press 999 to detect Gateway.
+;------------------------------------
+exten => 4283,1,Answer
+; Enter pin number
+exten => 4283,2,Playback(enter-pin)
+exten => 4283,3,Read(pin,,4)
+exten => 4283,4,SayDigits(${pin})
+; Enter gateway last octet
+exten => 4283,5,Playback(set-gateway)
+exten => 4283,6,Read(gw-octet,,3)
+exten => 4283,7,SayDigits(${gw-octet})
+exten => 4283,8,System(/bin/echo "${pin} ${gw-octet}" > /tmp/gwoctet.txt)
+exten => 4283,9,System(/user/bin/setgateway.sh)
+exten => 4283,10,Playback(result)
+
+; Set WiFi Channel CHAN 2426
+;------------------------------------
+exten => 2426,1,Answer
+; Enter pin number
+exten => 2426,2,Playback(enter-pin)
+exten => 2426,3,Read(pin,,4)
+exten => 2426,4,SayDigits(${pin})
+; Enter WiFi channel 
+exten => 2426,5,Playback(enter-wifi-channel)
+exten => 2426,6,Read(chan,,2)
+exten => 2426,7,SayDigits(${chan})
+exten => 2426,8,System(/bin/echo "${pin} ${chan}" > /tmp/chan.txt)
+exten => 2426,9,System(/user/bin/setchan.sh)
+exten => 2426,10,Playback(result)
+
+; Set Batman Gateway MPGW 6749  Enter 0 for Off, 1 for Server, 2 for Client mode.
+;------------------------------------
+exten => 6749,1,Answer
+; Enter pin number
+exten => 6749,2,Playback(enter-pin)
+exten => 6749,3,Read(pin,,4)
+exten => 6749,4,SayDigits(${pin})
+; Enter MPGW mode 
+exten => 6749,5,Playback(set-gw-mode)
+exten => 6749,6,Read(mpgw,,1)
+exten => 6749,7,SayDigits(${mpgw})
+exten => 6749,8,System(/bin/echo "${pin} ${mpgw}" > /tmp/mpgw.txt)
+exten => 6749,9,System(/user/bin/setmpgw.sh)
+exten => 6749,10,Playback(result)
+
+; Enable MP Fallback DHCP 3427  Enter 1 to enable, 0 to disable
+;------------------------------------
+exten => 3427,1,Answer
+; Enter pin number
+exten => 3427,2,Playback(enter-pin)
+exten => 3427,3,Read(pin,,4)
+exten => 3427,4,SayDigits(${pin})
+; Enter DHCP mode 
+exten => 3427,5,Playback(set-dhcp-mode)
+exten => 3427,6,Read(dhcp,,1)
+exten => 3427,7,SayDigits(${dhcp})
+exten => 3427,8,System(/bin/echo "${pin} ${dhcp}" > /tmp/dhcp.txt)
+exten => 3427,9,System(/user/bin/setdhcp.sh)
+exten => 3427,10,Playback(result)
+
+; Set Web Server WEBB 9322  Enter 0 for Off, 1 for On.
+;------------------------------------
+exten => 9322,1,Answer
+; Enter pin number
+exten => 9322,2,Playback(enter-pin)
+exten => 9322,3,Read(pin,,4)
+exten => 9322,4,SayDigits(${pin})
+; Enter Web Server mode 
+exten => 9322,5,Playback(set-webb-mode)
+exten => 9322,6,Read(webb,,1)
+exten => 9322,7,SayDigits(${webb})
+exten => 9322,8,System(/bin/echo "${pin} ${webb}" > /tmp/webb.txt)
+exten => 9322,9,System(/user/bin/setwebb.sh)
+exten => 9322,10,Playback(result)
+

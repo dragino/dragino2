@@ -1,0 +1,38 @@
+#!/bin/sh /etc/rc.common
+# Copyright (c) 2012 Edwin Chen <edwin@dragino.com>
+
+START=98
+load_config()
+{
+        sed -i '/DISTRIB_DESCRIPTION/d' /etc/openwrt_release
+	 VENDOR_VER=`grep 'MS14' /etc/banner`
+	 echo "VENDOR_DISTRIBUTION=\"$VENDOR_VER\"" >> /etc/openwrt_release
+	 uci set system.@system[0].key=$(hexdump -v -e '1/1 "%.2x"' -s $((0x100)) -n 16 /dev/mtd5)
+        uci set system.@system[0].device=$(hexdump -v -e '1/1 "%.2x"' -s $((0x120)) -n 16 /dev/mtd5)
+        uci set system.@system[0].hostname=dragino2-$(hexdump -v -e '1/1 "%.2x"' -s $((0x120)) -n 3 /dev/mtd5)
+	 echo $(uci get system.@system[0].hostname) > /proc/sys/kernel/hostname
+	 uci set system.@system[0].firstboot='0'
+	 uci commit
+
+}
+
+start()
+{
+	FIRSTBOOT=$(uci get system.@system[0].firstboot)
+
+	if [ $FIRSTBOOT -eq '1' ]
+	then
+		load_config
+	fi
+
+
+#	chmod 666 /dev/spidev0.0
+	
+#	/usr/sbin/IoTd 
+}
+
+stop()
+{
+	/usr/sbin/IoTd -k
+	rm -rf /var/run/IoTd
+}
