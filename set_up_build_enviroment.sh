@@ -30,14 +30,14 @@ echo " "
 echo "*** Checkout the OpenWRT build environment to the path specified on the command line"
 sleep 5
 mkdir -p $OPENWRT_PATH
-svn co svn://svn.openwrt.org/openwrt/trunk/@r33887 $OPENWRT_PATH
+svn co svn://svn.openwrt.org/openwrt/tags/attitude_adjustment_12.09/ $OPENWRT_PATH
 
 echo "*** Backup original feeds files if they exist"
 sleep 2
 mv $OPENWRT_PATH/feeds.conf.default  $OPENWRT_PATH/feeds.conf.default.bak
 
 echo "*** Create new feeds.conf.default file"
-echo "src-svn  packages svn://svn.openwrt.org/openwrt/packages@33887"      > $OPENWRT_PATH/feeds.conf.default
+echo "src-svn  packages svn://svn.openwrt.org/openwrt/branches/packages_12.09"      > $OPENWRT_PATH/feeds.conf.default
 echo "src-link dragino2 $REPO_PATH/package" >> $OPENWRT_PATH/feeds.conf.default
 echo "src-link secn2packages $OPENWRT_PATH/vt-secn2-packages/packages" >> $OPENWRT_PATH/feeds.conf.default
 
@@ -59,7 +59,7 @@ $OPENWRT_PATH/scripts/feeds install xinetd
 $OPENWRT_PATH/scripts/feeds install muninlite
 
 echo "*** Update feeds.conf.default file to lock further openwrt package updates"
-echo "#src-svn  packages        svn://svn.openwrt.org/openwrt/packages@33887"     > $OPENWRT_PATH/feeds.conf.default
+echo "#src-svn  packages http://item.jd.com/258575.html"     > $OPENWRT_PATH/feeds.conf.default
 echo "src-link dragino2 $REPO_PATH/package" >> $OPENWRT_PATH/feeds.conf.default
 echo "src-link secn2packages   $OPENWRT_PATH/vt-secn2-packages/packages"         >> $OPENWRT_PATH/feeds.conf.default
 echo " "

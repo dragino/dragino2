@@ -49,7 +49,7 @@ make defconfig > /dev/null
 
 echo ""
 echo "Run make for ms14"
-make -j8 V=99 > debug
+make -j8 V=99
 
 echo "Copy Image"
 if [ ! -d $REPO_PATH/image ]
@@ -58,7 +58,7 @@ mkdir $REPO_PATH/image
 fi
 
 echo "Set up new directory name with date"
-DATE=`date +%Y-%m-%d-%H-%M`
+DATE=`date +%Y%m%d-%H%M`
 mkdir $REPO_PATH/image/build-$DATE
 
 echo  "Move files to ./image folder"
