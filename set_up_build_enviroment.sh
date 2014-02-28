@@ -59,7 +59,7 @@ $OPENWRT_PATH/scripts/feeds install xinetd
 $OPENWRT_PATH/scripts/feeds install muninlite
 
 echo "*** Update feeds.conf.default file to lock further openwrt package updates"
-echo "#src-svn  packages http://item.jd.com/258575.html"     > $OPENWRT_PATH/feeds.conf.default
+echo "#src-svn  packages svn://svn.openwrt.org/openwrt/branches/packages_12.09"     > $OPENWRT_PATH/feeds.conf.default
 echo "src-link dragino2 $REPO_PATH/package" >> $OPENWRT_PATH/feeds.conf.default
 echo "src-link secn2packages   $OPENWRT_PATH/vt-secn2-packages/packages"         >> $OPENWRT_PATH/feeds.conf.default
 echo " "
