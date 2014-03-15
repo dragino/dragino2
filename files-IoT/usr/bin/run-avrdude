@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo 19 > /sys/class/gpio/export
+echo "high" > /sys/class/gpio/gpio19/direction
+echo 1 > /sys/class/gpio/gpio19/value
+avrdude -c linuxgpio -C /etc/avrdude.conf -p m32u4 -U lfuse:w:0xFF:m -U hfuse:w:0xD8:m -U efuse:w:0xCB:m -Uflash:w:$1:i $2
+echo 0 > /sys/class/gpio/gpio19/value
+echo 19 > /sys/class/gpio/unexport

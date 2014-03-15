@@ -50,6 +50,7 @@ rsync -avC platform/target/ $OPENWRT_PATH/target/
 
 #install required feeds
 $OPENWRT_PATH/scripts/feeds install -a -p dragino2
+$OPENWRT_PATH/scripts/feeds install avahi-daemon
 $OPENWRT_PATH/scripts/feeds install kmod-batman-adv  
 $OPENWRT_PATH/scripts/feeds install openssh-sftp-server
 $OPENWRT_PATH/scripts/feeds install usb-modeswitch
