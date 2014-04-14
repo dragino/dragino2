@@ -3,7 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dragino2
-PKG_VERSION:=1.0-IoT
+PKG_VERSION:=IoT-1.1
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
@@ -25,10 +25,10 @@ endef
 
 define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
-#	$(CP) ./src/* $(PKG_BUILD_DIR)/
-#	$(CP) ./luasrc/* $(PKG_BUILD_DIR)/
-	$(CP) ./config/* $(PKG_BUILD_DIR)/
-	$(CP) -r ./files $(PKG_BUILD_DIR)/files
+	mkdir -p $(PKG_BUILD_DIR)/etc
+	mkdir -p $(PKG_BUILD_DIR)/usr/bin
+	$(CP) ./files/etc/* $(PKG_BUILD_DIR)/etc
+	$(CP) ./files/usr/* $(PKG_BUILD_DIR)/usr
 endef
 
 define Build/Compile
@@ -37,31 +37,21 @@ BUILD_TIME:=$(shell date)
 
 define Package/dragino2/install
 	$(INSTALL_DIR) $(1)/etc
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/files/etc/banner $(1)/etc/banner
+	$(RM) $(TOPDIR)/files/etc/banner
+	$(CP) $(PKG_BUILD_DIR)/etc/banner $(TOPDIR)/files/etc/banner
 	
-#	$(SED) 's,$$$$R,$(REVISION),g' $(1)/etc/banner
-	$(SED) 's,$$$$F,$(PKG_VERSION)-$(PKG_RELEASE),g' $(1)/etc/banner
-	$(SED) 's,$$$$T,$(BUILD_TIME),g' $(1)/etc/banner
+	$(SED) 's,$$$$F,$(PKG_VERSION).$(PKG_RELEASE),g' $(TOPDIR)/files/etc/banner
+	$(SED) 's,$$$$T,$(BUILD_TIME),g' $(TOPDIR)/files/etc/banner
 
-#	$(INSTALL_DIR) $(1)/usr/lib/sensor
-#	$(INSTALL_DATA) $(PKG_BUILD_DIR)/files/usr/lib/sensor/* $(1)/usr/lib/sensor/
-
-#	$(INSTALL_DIR) $(1)/etc/config
-#	$(INSTALL_DATA) $(PKG_BUILD_DIR)/sensor.uci $(1)/etc/config/sensor
-#	$(INSTALL_DATA) $(PKG_BUILD_DIR)/IoTServer.uci $(1)/etc/config/IoTServer
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/dragino.init $(1)/etc/init.d/dragino
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/etc/init.d/dragino.init $(1)/etc/init.d/dragino
 
-#	$(INSTALL_DIR) $(1)/usr/sbin
-#	$(INSTALL_BIN) $(PKG_BUILD_DIR)/luad $(1)/usr/sbin/
-#	$(LN) /usr/sbin/luad $(1)/usr/sbin/IoTd
-#	$(INSTALL_BIN) $(PKG_BUILD_DIR)/IoTd.lua $(1)/usr/sbin/
+	$(INSTALL_DIR) $(1)/etc/arduino/ATmegaBoot
+	$(CP) $(PKG_BUILD_DIR)/etc/arduino/* $(1)/etc/arduino/
 
-#	$(INSTALL_DIR) $(1)/usr/bin
-#	$(INSTALL_BIN) $(PKG_BUILD_DIR)/fdude.lua $(1)/usr/bin/fdude
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(CP) $(PKG_BUILD_DIR)/usr/* $(1)/usr/
 
-#	$(INSTALL_DIR) $(1)/usr/lib/lua/dragino
-#	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dragino/*.lua $(1)/usr/lib/lua/dragino/
 endef
 
 $(eval $(call BuildPackage,dragino2))
