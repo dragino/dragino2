@@ -200,25 +200,6 @@ if [ $ENCRYPTION = "NONE" ]; then
 ENCRYPT="none"                                                      
 fi
 
-#Set up Reg Domain and Country Code for 11/13 channel working
-if [ $USREG_DOMAIN = "checked" ]; then
-  # set for 11 channel
-  COUNTRY="840"
-  REGDOMAIN="0x00"
-else
-  # Set for 13 channel
-  COUNTRY="276"
-  REGDOMAIN="0x35"
-fi
-
-# Check for invalid channel and regdomain combination
-if [ $USREG_DOMAIN = "checked" ] && [ $CHANNEL -gt "11" ]; then
-  # Set to default channel 1
-  uci set wireless.radio0.channel=1
-fi
-
-uci set wireless.radio0.country=$COUNTRY
-uci set wireless.radio0.regdomain=$REGDOMAIN
 
 uci set wireless.ap_0.encryption=$ENCRYPT
 uci set wireless.ap_0.key=$PASSPHRASE
