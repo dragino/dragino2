@@ -39,33 +39,28 @@ mv $OPENWRT_PATH/feeds.conf.default  $OPENWRT_PATH/feeds.conf.default.bak
 echo "*** Create new feeds.conf.default file"
 echo "src-svn  packages svn://svn.openwrt.org/openwrt/branches/packages_12.09"      > $OPENWRT_PATH/feeds.conf.default
 echo "src-link dragino2 $REPO_PATH/package" >> $OPENWRT_PATH/feeds.conf.default
-echo "src-link secn2packages $OPENWRT_PATH/vt-secn2-packages/packages" >> $OPENWRT_PATH/feeds.conf.default
+echo "src-link secn2packages $OPENWRT_PATH/vt-secn2-packages/packages-AA" >> $OPENWRT_PATH/feeds.conf.default
+echo " "
 
-#update required feeds
-$OPENWRT_PATH/scripts/feeds update
+echo "*** Update the feeds (See ./feeds-update.log)"
+sleep 2
+$OPENWRT_PATH/scripts/feeds update > ./feeds-update.log
+sleep 2
+echo " "
+tail -n 6 ./feeds-update.log
+echo " "
 
 echo ""
 echo "copy Dragino2 Platform info"
 rsync -avC platform/target/ $OPENWRT_PATH/target/
-
-#install required feeds
-$OPENWRT_PATH/scripts/feeds install -a -p dragino2
-$OPENWRT_PATH/scripts/feeds install avahi-daemon
-$OPENWRT_PATH/scripts/feeds install kmod-batman-adv  
-$OPENWRT_PATH/scripts/feeds install openssh-sftp-server
-$OPENWRT_PATH/scripts/feeds install usb-modeswitch
-$OPENWRT_PATH/scripts/feeds install usb-modeswitch-data 
-$OPENWRT_PATH/scripts/feeds install haserl 
-$OPENWRT_PATH/scripts/feeds install xinetd
-$OPENWRT_PATH/scripts/feeds install muninlite
-
-echo "*** Update feeds.conf.default file to lock further openwrt package updates"
-echo "#src-svn  packages svn://svn.openwrt.org/openwrt/branches/packages_12.09"     > $OPENWRT_PATH/feeds.conf.default
-echo "src-link dragino2 $REPO_PATH/package" >> $OPENWRT_PATH/feeds.conf.default
-echo "src-link secn2packages   $OPENWRT_PATH/vt-secn2-packages/packages"         >> $OPENWRT_PATH/feeds.conf.default
 echo " "
 
-#rm tmp directory
+echo "*** Install OpenWrt packages"
+sleep 10
+$OPENWRT_PATH/scripts/feeds install -a
+echo " "
+
+#Remove tmp directory
 rm -rf $OPENWRT_PATH/tmp/
 
 echo "*** Change to build directory"
@@ -74,6 +69,7 @@ echo " "
 
 echo "*** Run make defconfig to set up initial .config file (see ./defconfig.log)"
 make defconfig > ./defconfig.log
+
 # Backup the .config file
 cp .config .config.orig
 echo " "
