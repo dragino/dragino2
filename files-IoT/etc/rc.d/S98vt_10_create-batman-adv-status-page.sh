@@ -1,1 +1,0 @@
-../init.d/create-batman-adv-status-page.sh

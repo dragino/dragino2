@@ -16,7 +16,7 @@ $Id: lan.lua 5948 2010-03-27 14:54:06Z jow $
 ]]--
 
 local uci = luci.model.uci.cursor()
-local lanip = uci:get("network","lan","ipaddr")
+local lanip = uci:get("secn","dhcp","router")
 local lan_prex = string.match(lanip,"(%d+%p%d+%p%d+%p)%d+")
 
 m = Map("secn", translate("Small Enterprise-Campus Network"))
@@ -45,59 +45,58 @@ au:depends("enable","checked")
 au.enabled  = "checked"
 au.disabled = "unchecked"
 au.default  = au.disable
-au.rmempty  = false
 
 local nm = s:option(Value, "subnet", "Subnet Mask")
 nm:depends("enable","checked")
 nm:value("255.255.255.0")
 nm:value("255.255.0.0")
 nm:value("255.0.0.0")
-nm.rmempty  = false
 nm.datatype = "ipaddr"
+nm.default  = "255.255.255.0"
 function nm.write(self,section,value)
 	m.uci:set("network","lan","netmask",value)
 end
 
 local si = s:option(Value, "startip", "DHCP Start IP")
 si:depends("enable","checked")
-si.rmempty  = false
 si.datatype = "ipaddr"
+si.default  = lan_prex.."200"
+
 
 local ei = s:option(Value, "endip", "DHCP End IP")
 ei:depends("enable","checked")
-ei.rmempty  = false
 ei.datatype = "ipaddr"
+ei.default  = lan_prex.."240"
 
 
 
 local dns = s:option(Value, "dns", "DNS Server 1")
 dns:depends("enable","checked")
-dns.rmempty  = false
 dns.datatype = "host"
-function dns.write(self,section,value)
-	m.uci:set("network","lan","dns",value)
-end
+dns.default = "8.8.8.8"
 
 local dns2 = s:option(Value, "dns2", "DNS Server 2")
 dns2:depends("enable","checked")
-dns2.rmempty  = false
 dns2.datatype = "host"
+dns2.default = "8.8.8.4"
 
 local lt = s:option(Value, "leaseterm", "Lease Term (secs)")
 lt:depends("enable","checked")
-lt.rmempty  = false
 lt.datatype =  "uinteger"
+lt.default = 7200
 
 local ml = s:option(Value, "maxleases", "Max Leases")
 ml:depends("enable","checked")
-ml.rmempty  = false
 ml.datatype =  "uinteger"
+ml.default = 40
+
 
 local dm = s:option(Value, "domain", "Domain")
 dm:depends("enable","checked")
-dm.rmempty  = false
+dm.default = "dragino2"
 
-local fip = s:option(Flag, "FallbackIP", "Enable Fallback IP","Fallback IP is permanent IP in LAN interface")
+
+local fip = s:option(Flag, "FallbackIP", "Enable Fallback IP","Fallback IP is permanent IP in LAN port, active after reboot")
 fip.rmempty  = false
 fip.enabled  = "enable"
 fip.disabled = "disable"

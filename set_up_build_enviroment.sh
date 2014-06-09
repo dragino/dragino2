@@ -24,7 +24,7 @@ OPENWRT_PATH=$1
 
 echo " "
 echo " Get SECN 2 packages from GitHub repo"
-git clone https://github.com/villagetelco/vt-secn2-packages $OPENWRT_PATH/vt-secn2-packages
+git clone https://github.com/villagetelco/vt-secn2-packages vt-secn2-packages
 
 echo " "
 echo "*** Checkout the OpenWRT build environment to the path specified on the command line"
@@ -37,27 +37,26 @@ sleep 2
 mv $OPENWRT_PATH/feeds.conf.default  $OPENWRT_PATH/feeds.conf.default.bak
 
 echo "*** Create new feeds.conf.default file"
-echo "src-svn  packages svn://svn.openwrt.org/openwrt/branches/packages_12.09"      > $OPENWRT_PATH/feeds.conf.default
+echo "src-link  packages1209 $REPO_PATH/packages_12.09"      > $OPENWRT_PATH/feeds.conf.default
 echo "src-link dragino2 $REPO_PATH/package" >> $OPENWRT_PATH/feeds.conf.default
-echo "src-link secn2packages $OPENWRT_PATH/vt-secn2-packages/packages-AA" >> $OPENWRT_PATH/feeds.conf.default
+echo "src-link secn2packages $REPO_PATH/vt-secn2-packages/packages-AA" >> $OPENWRT_PATH/feeds.conf.default
+
 echo " "
 
 echo "*** Update the feeds (See ./feeds-update.log)"
 sleep 2
-$OPENWRT_PATH/scripts/feeds update > ./feeds-update.log
+$OPENWRT_PATH/scripts/feeds update
 sleep 2
-echo " "
-tail -n 6 ./feeds-update.log
-echo " "
-
-echo ""
-echo "copy Dragino2 Platform info"
-rsync -avC platform/target/ $OPENWRT_PATH/target/
 echo " "
 
 echo "*** Install OpenWrt packages"
 sleep 10
 $OPENWRT_PATH/scripts/feeds install -a
+echo " "
+
+echo ""
+echo "copy Dragino2 Platform info"
+rsync -avC platform/target/ $OPENWRT_PATH/target/
 echo " "
 
 #Remove tmp directory

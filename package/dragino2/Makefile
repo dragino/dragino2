@@ -27,21 +27,16 @@ define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)/etc
 	mkdir -p $(PKG_BUILD_DIR)/usr/bin
+	mkdir -p $(PKG_BUILD_DIR)/usr/lib/lua/dragino/iot
 	$(CP) ./files/etc/* $(PKG_BUILD_DIR)/etc
 	$(CP) ./files/usr/* $(PKG_BUILD_DIR)/usr
 endef
 
 define Build/Compile
 endef
-BUILD_TIME:=$(shell date)
 
 define Package/dragino2/install
 	$(INSTALL_DIR) $(1)/etc
-	$(RM) $(TOPDIR)/files/etc/banner
-	$(CP) $(PKG_BUILD_DIR)/etc/banner $(TOPDIR)/files/etc/banner
-	
-	$(SED) 's,$$$$F,$(PKG_VERSION).$(PKG_RELEASE),g' $(TOPDIR)/files/etc/banner
-	$(SED) 's,$$$$T,$(BUILD_TIME),g' $(TOPDIR)/files/etc/banner
 
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/etc/init.d/dragino.init $(1)/etc/init.d/dragino
@@ -50,6 +45,7 @@ define Package/dragino2/install
 	$(CP) $(PKG_BUILD_DIR)/etc/arduino/* $(1)/etc/arduino/
 
 	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_DIR) $(1)/usr/lib/lua/dragino/iot
 	$(CP) $(PKG_BUILD_DIR)/usr/* $(1)/usr/
 
 endef

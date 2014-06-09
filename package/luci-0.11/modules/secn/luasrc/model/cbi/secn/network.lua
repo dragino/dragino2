@@ -95,7 +95,7 @@ ppwd:depends("ethwanmode", "pptp")
 
 s = m:section(NamedSection, "modem", "secn", "USB Modem Setting")
 local ms = s:option(ListValue, "service", "USB Modem Service")
---ms.default = "utms"
+ms.default = "utms"
 ms:value("umts", "UMTS")
 ms:value("gprs", "GPRS")
 ms:value("cdma", "CDMA")
@@ -108,7 +108,9 @@ local upid = s:option(Value, "product", "PID")
 upid.placeholder = "USB Product ID"
 
 s:option(Value, "apn", "Service APN")
-s:option(Value, "dialstr", "Dial String")
+local ds = s:option(Value, "dialstr", "Dial String")
+ds.default = "*99#"
+
 s:option(Value, "username", "Username")
 local upwd = s:option(Value, "password", "Password")
 upwd.password = true

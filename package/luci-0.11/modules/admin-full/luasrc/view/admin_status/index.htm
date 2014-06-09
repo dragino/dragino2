@@ -15,10 +15,14 @@ You may obtain a copy of the License at
 	require "luci.fs"
 	require "luci.tools.status"
 
+
 	local has_ipv6 = luci.fs.access("/proc/net/ipv6_route")
 	local has_dhcp = luci.fs.access("/etc/config/dhcp")
 	local has_wifi = luci.fs.stat("/etc/config/wireless")
 	      has_wifi = has_wifi and has_wifi.size > 0
+
+	local utility = require "dragino.utility"
+	local firmwre_version,build_time = utility.getVersion()
 
 	if luci.http.formvalue("status") == "1" then
 		local ntm = require "luci.model.network".init()
@@ -509,9 +513,8 @@ You may obtain a copy of the License at
 	<table width="100%" cellspacing="10">
 		<tr><td width="33%"><%:Router Name%></td><td><%=luci.sys.hostname() or "?"%></td></tr>
 		<tr><td width="33%"><%:Router Model%></td><td><%=pcdata(model or "?")%></td></tr>
-		<tr><td width="33%"><%:Firmware Version%></td><td>
-			<%=pcdata(luci.version.vendordist)%> 
-		</td></tr>
+		<tr><td width="33%"><%:Firmware Version%></td><td><%=firmwre_version%> </td></tr>
+		<tr><td width="33%"><%:Build Time%></td><td><%=build_time%> </td></tr>
 		<tr><td width="33%"><%:Local Time%></td><td id="localtime">-</td></tr>
 		<tr><td width="33%"><%:Uptime%></td><td id="uptime">-</td></tr>
 		<tr><td width="33%"><%:Load Average%></td><td id="loadavg">-</td></tr>

@@ -15,6 +15,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://svn.savannah.nongnu.org/svn/avrdude/trunk/avrdude
+PKG_MD5SUM:=d6d1eb64c83ae44e58317a35b9710c10
 PKG_SOURCE_SUBDIR:=avrdude-$(PKG_VERSION)
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE_PROTO:=svn
@@ -24,16 +25,13 @@ include $(INCLUDE_DIR)/package.mk
 define Package/avrdude
   SECTION:=utils
   CATEGORY:=Utilities
+  DEPENDS:=+libncurses +libreadline +libpthread +libusb-compat +lm $(CXX_DEPENDS)
   TITLE:=AVR Downloader/UploaDEr
   URL:=http://www.bsdhome.com/avrdude/
-  DEPENDS:=+libncurses +libreadline +libusb-compat +libc +libelf1 +libpthread +lm $(CXX_DEPENDS)
 endef
 
 define Package/avrdude/description
  AVRDUDE is a full featured program for programming Atmel's AVR CPU's.
-endef
-
-define Build/Configure
 endef
 
 define Build/Prepare

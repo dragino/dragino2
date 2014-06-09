@@ -23,7 +23,6 @@ local ad = s:option(Flag, "ap_disable", "Enable WiFi AP",
 	"Enable WiFi AP")
 ad.enabled  = "0"
 ad.disabled = "1"
-ad.default  = ad.disable
 ad.rmempty  = false
 
 local ssid = s:option(Value, "ssid", "<abbr title=\"SSID, Leave blank to use hostname as default setting\">Station ID</abbr>")
@@ -44,10 +43,6 @@ pwd:depends("encryption","WPA1")
 pwd:depends("encryption","WPA2")
 pwd:depends("encryption","WEP")
 
-local ur = s:option(Flag, "usreg_domain", "CAN/US Reg")
-ur.rmempty  = false
-ur.enabled  = "1"
-ur.disabled = "0"
 
 local channel = s:option(ListValue, "CHANNEL", "Channel")
 channel.default = "6"
