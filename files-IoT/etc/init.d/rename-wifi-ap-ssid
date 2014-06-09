@@ -1,0 +1,35 @@
+#!/bin/sh /etc/rc.common
+# Copyright (c) 2012 Edwin Chen <edwin@dragino.com>
+
+START=18
+start() {
+
+#Rename AP SSID
+	AP_DISABLE=$(uci get secn.accesspoint.ap_disable)
+	SSID=$(uci get secn.accesspoint.ssid)
+
+	if [ "$AP_DISABLE" == "0" -a "$SSID" == "dragino2" ]
+	then
+		SSID="Dragino2-$(hexdump -v -e '1/1 "%.2x"' -s $((0x120)) -n 3 /dev/mtd5)"
+		uci set secn.accesspoint.ssid=$SSID
+		uci set wireless.ap_0.ssid=$SSID
+		uci commit secn
+		uci commit wireless
+		logger -t rename "WiFi renamed $SSID"
+	fi
+	
+#Rename DHCP LAN Domain
+	DHCP_ENABLE=$(uci get secn.dhcp.enable)
+	DHCP_DOMAIN=$(uci get secn.dhcp.domain)
+
+	if [ "$DHCP_ENABLE" == "enable" -a "$DHCP_DOMAIN" == "dragino2" ]
+	then
+		DHCP_DOMAIN="Dragino2-$(hexdump -v -e '1/1 "%.2x"' -s $((0x120)) -n 3 /dev/mtd5)"
+		uci set secn.dhcp.domain=$DHCP_DOMAIN
+		uci set dhcp.setup.domain=$DHCP_DOMAIN
+		uci commit secn
+		uci commit dhcp
+		logger -t rename "DHCP Domain renamed $DHCP_DOMAIN"
+	fi
+	
+}
