@@ -22,6 +22,7 @@ _G[modname] = M
 local type,assert,print,pairs,string,io,os = type,assert,print,pairs,string,io,os
 
 local uci = require("luci.model.uci")
+local util = require("luci.util")
 
 
 setfenv(1,M)
@@ -66,6 +67,18 @@ function logger(msg)
 	else 
 		os.execute("logger ".. msg)
 	end 
+end
+
+--Get USB Modem
+--@return USB Manufacture, Vendor ID and Product ID
+function getUSBInfo()
+	local USB_INFO=util.exec('cat /proc/bus/usb/devices | grep -A 1 "P:  Vendor"')
+	local start = string.find(USB_INFO,"%-%-")
+	if start == nil then return nil end
+	u_man=string.match(USB_INFO,"Manufacturer=([%w%s%.%_]+[%w])",start)
+	u_vid=string.match(USB_INFO,"Vendor=([%w]+)",start)
+	u_pid=string.match(USB_INFO,"ProdID=([%w]+)",start)
+	return u_man,u_vid,u_pid
 end
 
 return M

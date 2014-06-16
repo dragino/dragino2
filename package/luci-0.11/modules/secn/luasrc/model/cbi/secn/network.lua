@@ -19,6 +19,7 @@ $Id: network.lua 5948 2010-03-27 14:54:06Z jow $
 local wa  = require "luci.tools.webadmin"
 local sys = require "luci.sys"
 local fs  = require "nixio.fs"
+local utility = require "dragino.utility"
 
 local has_pptp  = fs.access("/usr/sbin/pptp")
 local has_pppoe = fs.glob("/usr/lib/pppd/*/rp-pppoe.so")()
@@ -32,7 +33,7 @@ local w = s:option(ListValue, "wanport", translate("Access Internet Via"))
 --w.override_values = true 
 w:value("Disable","Disable")
 w:value("Ethernet","WAN Port")
-w:value("WiFi","Wifi Client")
+w:value("WiFi","WiFi Client")
 w:value("USB-Modem","USB Modem")
 
 local wssid = s:option(Value, "wanssid", "SSID")
@@ -94,6 +95,26 @@ ppwd:depends("ethwanmode", "pppoe")
 ppwd:depends("ethwanmode", "pptp")
 
 s = m:section(NamedSection, "modem", "secn", "USB Modem Setting")
+
+local uinfo = s:option(DummyValue,"_USB_Detect","USB Modem")
+function uinfo.cfgvalue(self,section)
+	local u_man,u_vid,u_pid = utility.getUSBInfo()	
+	if u_man == nil then return "No USB Detected" end
+	return 'Manufacturer:'..u_man..', \nVendor ID:'..u_vid..', Product ID:'..u_pid
+end
+
+local modemstatus = s:option(DummyValue,"_usb_status","Modem Status")
+function modemstatus.cfgvalue(self,section)
+	local r = sys.exec('ifconfig | grep -A 1 3g | grep "inet addr"') or "Disconnected"
+	return r
+end
+
+local usb_port = s:option(DummyValue,"_usb_port","Available USB Port")
+function usb_port.cfgvalue(self,section)
+	local r = sys.exec('ls /dev/ttyUSB*') or "No"
+	return r
+end
+
 local ms = s:option(ListValue, "service", "USB Modem Service")
 ms.default = "utms"
 ms:value("umts", "UMTS")
@@ -111,11 +132,16 @@ s:option(Value, "apn", "Service APN")
 local ds = s:option(Value, "dialstr", "Dial String")
 ds.default = "*99#"
 
-s:option(Value, "username", "Username")
-local upwd = s:option(Value, "password", "Password")
+s:option(Value, "user", "Username")
+
+local upwd = s:option(Value, "pass", "Password")
 upwd.password = true
 
+local count
 s:option(Value, "pin", "PIN")
-s:option(Value, "modemport", "USB Serial Port")
+local usbp = s:option(ListValue, "modemport", "USB Serial Port")
+for count=0,10 do 
+usbp:value(count, "ttyUSB"..count)
+end
 
 return m

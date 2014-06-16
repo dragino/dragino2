@@ -31,9 +31,9 @@ function index()
 	page.index    = true
 	page.ucidata = true
 
-	entry({"secn"}, alias("secn", "network"), "SECN", 5)
+	entry({"secn"}, alias("secn", "network"), "Dragino Web Panel", 5)
 	entry({"secn", "network"}, alias("secn", "network","network"), "Network", 5)
-	entry({"secn", "network","network"}, cbi("secn/network"), "Internet", 10)
+	entry({"secn", "network","network"}, cbi("secn/network"), "Internet Access", 10)
 	entry({"secn", "network","lan"}, cbi("secn/lan"), "LAN and DHCP", 11)
 	entry({"secn", "network","ap"}, cbi("secn/ap"), "Access Point", 30)
 	entry({"secn", "network","mesh"}, cbi("secn/mesh"), "Mesh Network", 40)
