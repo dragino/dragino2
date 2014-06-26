@@ -15,6 +15,9 @@ load_config()
 
 start()
 {
+	echo 24 > /sys/class/gpio/export
+	echo "high" > /sys/class/gpio/gpio24/direction
+
 	FIRSTBOOT=$(uci get system.@system[0].firstboot)
 
 	if [ $FIRSTBOOT -eq '1' ]
@@ -22,14 +25,9 @@ start()
 		load_config
 	fi
 
-
-#	chmod 666 /dev/spidev0.0
-	
-#	/usr/sbin/IoTd 
 }
 
 stop()
 {
-	/usr/sbin/IoTd -k
-	rm -rf /var/run/IoTd
+
 }
