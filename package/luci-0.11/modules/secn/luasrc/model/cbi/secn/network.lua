@@ -34,6 +34,7 @@ local w = s:option(ListValue, "wanport", translate("Access Internet Via"))
 w:value("Disable","Disable")
 w:value("Ethernet","WAN Port")
 w:value("WiFi","WiFi Client")
+w:value("Mesh","Mesh WiFi")
 w:value("USB-Modem","USB Modem")
 
 local wssid = s:option(Value, "wanssid", "SSID")

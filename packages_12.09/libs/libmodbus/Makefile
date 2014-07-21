@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libmodbus
-PKG_VERSION:=3.0.2
+PKG_VERSION:=3.1.1
 PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=http://github.com/downloads/stephane/libmodbus/
-PKG_MD5SUM:=1aaacce9d9779d3a84f7d1a75774c943
+PKG_SOURCE_URL:=http://libmodbus.org/releases/
+PKG_MD5SUM:=110f4f1f173d0b8dd1fb3ab0006d2a9f
 
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
