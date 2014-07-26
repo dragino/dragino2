@@ -1,0 +1,9 @@
+#!/bin/sh
+
+case "$ACTION" in
+	add)
+ 		/bin/mkdir -p /dev/dahdi
+	 	/bin/mknod -m 0644 /dev/dahdi/${DEVICENAME#dahdi!} c $MAJOR $MINOR
+	 	;;
+esac
+

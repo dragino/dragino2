@@ -1,0 +1,10 @@
+--- a/menuselect/test/menuselect-tree
++++ b/menuselect/test/menuselect-tree
+@@ -216,7 +216,6 @@
+ <member name="chan_dahdi" displayname="DAHDI Telephony" remove_on_change="channels/chan_dahdi.o channels/chan_dahdi.so">
+ 	<depend>res_smdi</depend>
+ 	<depend name="dahdi">DAHDI</depend>
+-	<depend>tonezone</depend>
+ 	<use>pri</use>
+ 	<use>ss7</use>
+ </member>
