@@ -27,7 +27,7 @@ then
 APP=$2
 fi
 
-VERSION=1.2.2
+VERSION=1.2.3
 BUILD=$APP-$VERSION
 BUILD_TIME="`date`"
 
@@ -87,7 +87,7 @@ mv ./bin/ar71xx/openwrt*squashfs.bin   $REPO_PATH/image/$APP-build-$DATE/
 mv ./bin/ar71xx/openwrt*sysupgrade.bin $REPO_PATH/image/$APP-build-$DATE/
 
 echo "Update md5sums"
-cat ./bin/ar71xx/md5sums | grep "dragino2" >> $REPO_PATH/image/$APP-build-$DATE/md5sums
+cat ./bin/ar71xx/md5sums | grep "dragino2" >> $REPO_PATH/image/$APP-build--v$VERSION--$DATE/md5sums
 echo ""
 echo "End Dragino2 build"
 echo ""
