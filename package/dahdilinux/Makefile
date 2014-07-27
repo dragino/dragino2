@@ -66,7 +66,7 @@ endef
 define KernelPackage/dahdi-linux/install
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/dahdi
 	$(INSTALL_DATA) ./files/10-create-device-node $(1)/etc/hotplug.d/dahdi/
-	$(INSTALL_DATA) ./files/hotplug2.rules $(1)/etc/
+#	$(INSTALL_DATA) ./files/hotplug2.rules $(1)/etc/
 
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/dahdi.init $(1)/etc/init.d/dahdi
