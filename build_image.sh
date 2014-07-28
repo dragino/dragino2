@@ -79,12 +79,12 @@ fi
 
 echo "Set up new directory name with date"
 DATE=`date +%Y%m%d-%H%M`
-mkdir $REPO_PATH/image/$APP-build-$DATE
+mkdir $REPO_PATH/image/$APP-build--v$VERSION--$DATE
 
 echo  "Move files to ./image folder"
-mv ./bin/ar71xx/openwrt*kernel.bin     $REPO_PATH/image/$APP-build-$DATE/
-mv ./bin/ar71xx/openwrt*squashfs.bin   $REPO_PATH/image/$APP-build-$DATE/
-mv ./bin/ar71xx/openwrt*sysupgrade.bin $REPO_PATH/image/$APP-build-$DATE/
+mv ./bin/ar71xx/openwrt*kernel.bin     $REPO_PATH/image/$APP-build--v$VERSION--$DATE/
+mv ./bin/ar71xx/openwrt*squashfs.bin   $REPO_PATH/image/$APP-build--v$VERSION--$DATE/
+mv ./bin/ar71xx/openwrt*sysupgrade.bin $REPO_PATH/image/$APP-build--v$VERSION--$DATE/
 
 echo "Update md5sums"
 cat ./bin/ar71xx/md5sums | grep "dragino2" >> $REPO_PATH/image/$APP-build--v$VERSION--$DATE/md5sums
