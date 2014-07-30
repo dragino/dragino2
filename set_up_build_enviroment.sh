@@ -8,7 +8,7 @@ then
 	echo "Error. Not enough arguments."
 	echo $USAGE
 	exit 1
-elif (( $# > 1 ))
+elif (( $# > 2 ))
 then
 	echo "Error. Too many arguments."
 	echo $USAGE
@@ -57,6 +57,15 @@ echo " "
 echo ""
 echo "copy Dragino2 Platform info"
 rsync -avC platform/target/ $OPENWRT_PATH/target/
+
+echo "copy extra $2 Platform info"
+if [ $2 ]
+then 
+	APP=$2
+	echo "copy extra $APP Platform info"
+	rsync -avC platform-$APP/target/ $OPENWRT_PATH/target/		
+fi
+
 echo " "
 
 #Remove tmp directory

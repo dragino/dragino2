@@ -80,14 +80,25 @@ fi
 echo "Set up new directory name with date"
 DATE=`date +%Y%m%d-%H%M`
 mkdir $REPO_PATH/image/$APP-build--v$VERSION--$DATE
+IMAGE_DIR=$REPO_PATH/image/$APP-build--v$VERSION--$DATE
 
 echo  "Move files to ./image folder"
-mv ./bin/ar71xx/openwrt*kernel.bin     $REPO_PATH/image/$APP-build--v$VERSION--$DATE/
-mv ./bin/ar71xx/openwrt*squashfs.bin   $REPO_PATH/image/$APP-build--v$VERSION--$DATE/
-mv ./bin/ar71xx/openwrt*sysupgrade.bin $REPO_PATH/image/$APP-build--v$VERSION--$DATE/
+mv ./bin/ar71xx/openwrt*kernel.bin     $IMAGE_DIR/
+mv ./bin/ar71xx/openwrt*squashfs.bin   $IMAGE_DIR/
+mv ./bin/ar71xx/openwrt*sysupgrade.bin $IMAGE_DIR/
 
 echo "Update md5sums"
-cat ./bin/ar71xx/md5sums | grep "dragino2" >> $REPO_PATH/image/$APP-build--v$VERSION--$DATE/md5sums
+cat ./bin/ar71xx/md5sums | grep "dragino2" >> $IMAGE_DIR/md5sums
+
+
+echo ""
+echo "Back Up Custom Config to Image DIR"
+echo ""
+mkdir $IMAGE_DIR/custom_config
+cp $REPO_PATH/.config.$APP $IMAGE_DIR/custom_config/.config
+cp -r $REPO_PATH/files-$APP $IMAGE_DIR/custom_config/files
+
+
 echo ""
 echo "End Dragino2 build"
 echo ""

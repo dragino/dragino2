@@ -1,0 +1,37 @@
+config global automount
+	option from_fstab '1'
+	option anon_mount '1'
+	
+config global autoswap
+	option from_fstab '1'
+	option anon_swap '0'
+	
+config 'mount'
+	option 'target'		'/user'
+	option 'label'		'SECN-extended'
+	option 'fstype'		'ext3'
+
+config 'mount'
+	option 'target'		'/www/websites2'
+	option 'label'		'WEBSITES'
+	option 'fstype'		'vfat'
+
+config 'mount'
+	option 'device'		'/dev/sda1'
+	option 'target'		'/mnt/sda1'
+	option 'fstype'		'auto'
+
+config 'mount'
+	option 'device'		'/dev/sdb1'
+	option 'target'		'/mnt/sdb1'
+	option 'fstype'		'auto'
+
+config 'mount'
+	option 'device'		'/dev/sdc1'
+	option 'target'		'/mnt/sdc1'
+	option 'fstype'		'auto'
+
+config swap
+	option device	'/dev/sda2'
+	option enabled	'0'
+
