@@ -150,7 +150,7 @@ static struct spi_board_info si3217x_spi_info[] = {
 		.modalias	= "si3217x",
 		.chip_select	= 0,
 		.controller_data        = (void *) 24,
-		.mode 		= 0,
+		.mode 		= 3,
 		.irq		= 27,
 	}
 };
