@@ -19,16 +19,17 @@ _G[modname] = M
 
 
 
-local type,assert,print,pairs,string,io,os = type,assert,print,pairs,string,io,os
+local type,assert,print,pairs,string,io,os,table = type,assert,print,pairs,string,io,os,table
 
 local uci = require("luci.model.uci")
 local util = require("luci.util")
-
+local fs = require("luci.fs")
 
 setfenv(1,M)
 
 uci = uci.cursor()
 local uartmode = uci:get("iot","general","uartmode")
+local SENSOR_DIR = '/var/iot/channels/'
 
 --dump a lua table
 function tabledump(t,indent)
@@ -79,6 +80,26 @@ function getUSBInfo()
 	u_vid=string.match(USB_INFO,"Vendor=([%w]+)",start)
 	u_pid=string.match(USB_INFO,"ProdID=([%w]+)",start)
 	return u_man,u_vid,u_pid
+end
+
+--Retreive Sensor Values
+--@return a sensor table, Vendor ID and Product ID
+function get_sensor_data()
+  local valuetable = {}
+  uci:foreach("sensor","channels",
+    function (section)
+	if section.class == 'sensor' and section.id and section.type and section.remoteID then
+	  if fs.isfile(SENSOR_DIR .. section[".name"]) then 
+	    local value = util.trim(util.exec("tail -n 1 " .. SENSOR_DIR .. section[".name"]))
+	    if value ~= nil and value ~= "" then
+		section.value = value
+		table.insert(valuetable,section)
+	    end	
+	  end
+	end  
+    end
+  )
+  return valuetable
 end
 
 return M

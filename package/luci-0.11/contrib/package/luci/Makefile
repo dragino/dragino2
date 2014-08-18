@@ -384,6 +384,9 @@ $(eval $(call application,voice-diag,LuCI Voice Software (Diagnostics),\
 
 $(eval $(call application,commands,LuCI Shell Command Module))
 
+$(eval $(call application,sensor,Dragino Sensor Application,\
+	+PACKAGE_luci-app-sensor:sensor))
+
 $(eval $(call application,upnp,Universal Plug & Play configuration module,\
 	+PACKAGE_luci-app-upnp:miniupnpd))
 

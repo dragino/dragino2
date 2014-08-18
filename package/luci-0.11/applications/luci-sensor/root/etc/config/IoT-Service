@@ -1,0 +1,4 @@
+config server 'Xively'
+	option Feed ''
+	option ApiKEY ''
+

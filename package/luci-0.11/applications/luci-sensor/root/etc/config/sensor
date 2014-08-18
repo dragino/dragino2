@@ -1,0 +1,7 @@
+
+config settings 'service'
+	option server 'Xively'
+	option update_interval '60'
+	option debug '0'
+
+

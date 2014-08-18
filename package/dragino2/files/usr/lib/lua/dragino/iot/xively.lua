@@ -23,7 +23,7 @@ _G[modname] = M
 local json = require 'luci.json'
 local http = require 'socket.http'
 local ltn12 = require 'ltn12'
-local print,tonumber,tostring = print,tonumber,tostring
+local pairs,tonumber,tostring,print = pairs,tonumber,tostring,print
 local table = table
 local uci = require("luci.model.uci")
 
@@ -34,12 +34,28 @@ setfenv(1,M)
 
 uci = uci.cursor()
 local TOP_URL = 'https://api.xively.com'
-local service = uci:get_all("iot","general")
-local debug = service.debug
+local SENSOR_DIR = '/var/iot/channels/'
+local account = uci:get_all("IoT-Service","Xively")
+local debug = uci:get("sensor","service","debug")
 debug = tonumber(debug)
 local logger = utility.logger
 
---upload data
+--get sensor data
+--@return sensor_table which can be used for post_data
+function collect_sensor_data()
+  local valuetable = {}
+  local t = utility.get_sensor_data()
+  for k,v in pairs(t) do
+    local n = #valuetable+1
+    valuetable[n]={}
+    valuetable[n].id= v.remoteID
+    valuetable[n].current_value = v.value
+  end
+  return valuetable
+end
+
+
+--upload data RESTful
 --@param ak ApiKey
 --@param feed_id feed id
 --@param value value table . etc: {{id = "Humidity", current_value = "36" }, {id = "Temperature", current_value = "54"}}
@@ -74,5 +90,16 @@ function post_data(ak, feed_id,value)
 
 	return code
 end
+
+--upload data handler
+--@return code return code
+function update_data()
+  local datastream = collect_sensor_data()
+  local apiKey = account.ApiKEY
+  local feed = account.Feed
+  post_data(apiKey, feed,datastream)
+end
+
+
 
 return M
