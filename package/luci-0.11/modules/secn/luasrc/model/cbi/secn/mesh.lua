@@ -24,8 +24,8 @@ m:chain("wireless")
 
 s = m:section(NamedSection, "mesh", "secn", translate("Mesh Setting"), "Mesh devices should have the same WiFi Channel, SSID and BSSID to communicate with others")
 local me = s:option(Flag, "mesh_enable", "Enable Mesh","Enable Mesh Network")
-me.enabled  = "checked"
-me.disabled = "unchecked"
+me.enabled  = "1"
+me.disabled = "0"
 me.default  = me.disable
 me.rmempty  = false
 

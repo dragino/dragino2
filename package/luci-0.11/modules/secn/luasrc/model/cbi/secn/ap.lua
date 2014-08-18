@@ -44,7 +44,7 @@ pwd:depends("encryption","WPA2")
 pwd:depends("encryption","WEP")
 
 
-local channel = s:option(ListValue, "CHANNEL", "Channel")
+local channel = s:option(ListValue, "channel", "Channel")
 channel.default = "6"
 for i=1,11 do  
 	channel:value(i,"Channel ".. i)

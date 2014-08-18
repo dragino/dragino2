@@ -60,6 +60,7 @@ if has_pppoe then p:value("pppoe", "PPPoE") end
 if has_pptp  then p:value("pptp",  "PPTP")  end
 p:depends("wanport","Ethernet")
 p:depends("wanport","WiFi")
+p:depends("wanport","Mesh")
 
 --#########################need to rewite code to support pppoe or add in SECN-Config
 
