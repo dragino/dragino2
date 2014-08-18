@@ -21,7 +21,7 @@ config secn 'accesspoint'
 	option maxassoc '30'
 	option ssid 'dragino2'
 	option passphrase 'dragino-dragino'
-	option CHANNEL '6'
+	option channel '6'
 	option ap_disable '0'
 	option encryption 'WPA2'
 
