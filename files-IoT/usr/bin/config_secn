@@ -18,7 +18,7 @@ ENCRYPTION=`uci get secn.accesspoint.encryption`
 AP_DISABLE=`uci get secn.accesspoint.ap_disable`
 MAXASSOC=`uci get secn.accesspoint.maxassoc`
 USREG_DOMAIN=`uci get secn.accesspoint.usreg_domain`
-CHANNEL=`uci get wireless.radio0.channel`
+CHANNEL=`uci get secn.accesspoint.channel`
 MESH_ENABLE=`uci get secn.mesh.mesh_enable`
 
 # Set to WPA1 by default                                 
@@ -36,7 +36,7 @@ if [ $ENCRYPTION = "NONE" ]; then
 ENCRYPT="none"                                                      
 fi
 
-
+uci set wireless.radio0.channel=$CHANNEL
 uci set wireless.ap_0.encryption=$ENCRYPT
 uci set wireless.ap_0.key=$PASSPHRASE
 uci set wireless.ap_0.ssid=$SSID
@@ -140,6 +140,8 @@ if [ $WANPORT = "Disable" ]; then
 	uci set wireless.sta_0.disabled='1'
 fi
 
+#############################################################
+#### Use WAN port for Internet Access
 if [ $WANPORT = "Ethernet" ]; then
  	# Set up for Eth WAN port
 	uci set network.lan.ifname='eth0'   # This is just a dummy
@@ -148,33 +150,42 @@ if [ $WANPORT = "Ethernet" ]; then
 	uci set wireless.sta_0.disabled='1'
 fi
 
-# Set up for Mesh WAN
+#### Use MESH Interface for Internet Access
 if [ $WANPORT = "Mesh" ]; then
  	# Set up eth1 as LAN or WAN
 	uci set network.lan.ifname='eth0'
 	uci set network.wan.ifname='bat0 eth1' 
 	uci set network.wan.type='bridge' # Reqd. See /etc/init.d/set-mesh-gw-mode
-	MESH_ENABLE='checked'
-	uci set secn.mesh.mesh_enable='checked'
+	MESH_ENABLE='1'
+	uci set secn.mesh.mesh_enable='1'
 	uci set network.lan.gateway='255.255.255.255'
+
+	# Disable WiFi Client mode 
+	uci set wireless.sta_0.disabled='1'
 fi
 
+#### Use WiFi Client mode for Internet Access
 if [ $WANPORT = "WiFi" ]; then
 	uci set network.lan.ifname='eth0'
 	uci set network.lan.gateway='255.255.255.255'
+
+
     	# Set up for wlan0 WAN port
 	uci set wireless.sta_0.disabled='0'
 	uci set wireless.sta_0.ssid=$WANSSID
 	uci set wireless.sta_0.key=$WANPASS
 	uci set wireless.sta_0.encryption=$WANENCR
 	uci set network.wan.ifname='wlan0-2'
+
+	# Disable WiFi AP mode
+	uci set wireless.ap_0.disabled='1'
 	# Disable mesh
 	uci set secn.mesh.mesh_enable='0'
 	MESH_ENABLE='0'
 fi
 
 # Disable mesh if required
-if [ $MESH_ENABLE = "checked" ]; then
+if [ $MESH_ENABLE = "1" ]; then
 	uci set wireless.ah_0.disabled='0'
 else
 	uci set wireless.ah_0.disabled='1'

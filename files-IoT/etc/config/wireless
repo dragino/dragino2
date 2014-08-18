@@ -35,6 +35,7 @@ config wifi-iface 'ah_0'
 
 config wifi-iface 'sta_0'
 	option device 'radio0'
+	option ifname 'wlan0-2'
 	option mode 'sta'
 	option network 'wan'
 	option disabled '1'
