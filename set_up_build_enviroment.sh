@@ -71,6 +71,11 @@ echo " "
 #Remove tmp directory
 rm -rf $OPENWRT_PATH/tmp/
 
+echo "*** Download dl source"
+git clone https://github.com/dragino/Dragino2_dl_bak.git dl
+cp -r dl/dl $OPENWRT_PATH
+echo " "
+
 echo "*** Change to build directory"
 cd $OPENWRT_PATH
 echo " "
