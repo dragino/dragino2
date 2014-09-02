@@ -1,0 +1,36 @@
+#!/bin/sh
+
+#check reference profile to set up MCU type and fuse
+profile=`uci get sensor.mcu.MCUProfile`
+
+#Check if GPIO19 is already exported
+if [ -d /sys/class/gpio/gpio19 ]; then
+GPIO19_EXPORTED='YES'
+fi
+
+if [ ! $GPIO19_EXPORTED ]; then
+	echo 19 > /sys/class/gpio/export
+fi
+
+#enable SPI connection between dragino and avr module: reference hardware: M32,M32W and Yun Shield
+echo "high" > /sys/class/gpio/gpio19/direction
+echo 1 > /sys/class/gpio/gpio19/value
+
+if [ $profile == 'leonardo' ]; then
+   avrdude -c linuxgpio -C /etc/avrdude.conf -p m32u4 -U lfuse:w:0xFF:m -U hfuse:w:0xD8:m -U efuse:w:0xCB:m -Uflash:w:$1:i $2
+elif [ $profile == 'uno' ]; then
+  avrdude -c linuxgpio -C /etc/avrdude.conf -p m328p -U lfuse:w:0xFF:m -U hfuse:w:0xDE:m -U efuse:w:0x05:m -Uflash:w:$1:i $2
+elif [ $profile == 'duemilanove328' ]; then
+  avrdude -c linuxgpio -C /etc/avrdude.conf -p m328 -U lfuse:w:0xFF:m -U hfuse:w:0xDA:m -U efuse:w:0x05:m -Uflash:w:$1:i $2
+elif [ $profile == 'duemilanove168' ]; then
+  avrdude -c linuxgpio -C /etc/avrdude.conf -p m168 -U lfuse:w:0xFF:m -U hfuse:w:0xDD:m -U efuse:w:0x00:m -Uflash:w:$1:i $2
+elif [ $profile == 'mega2560' ]; then
+  avrdude -c linuxgpio -C /etc/avrdude.conf -p m2560 -U lfuse:w:0xFF:m -U hfuse:w:0xD8:m -U efuse:w:0xFD:m -Uflash:w:$1:i $2
+fi
+
+#disconnect SPI
+echo 0 > /sys/class/gpio/gpio19/value
+
+if [ ! $GPIO19_EXPORTED ]; then
+	echo 19 > /sys/class/gpio/unexport
+fi

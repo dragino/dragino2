@@ -1,0 +1,15 @@
+#!/bin/sh
+#ping to a host address and indicate alive status via LEDs
+
+host="`uci get sensor.service.pinghost`"
+
+while [ 1 ]
+do
+  echo 0 > /sys/devices/platform/leds-gpio/leds/dragino2:red:usb/brightness
+  if [ ! -z "`fping -e $host | grep alive`" ]; then
+    echo 1 > /sys/devices/platform/leds-gpio/leds/dragino2:red:usb/brightness
+  fi
+  sleep 1
+  echo 0 > /sys/devices/platform/leds-gpio/leds/dragino2:red:usb/brightness  
+  sleep 1
+done

@@ -1,0 +1,12 @@
+#!/bin/sh
+
+#Set Sensor Value
+SENSOR_DIR="/var/iot/channels"
+SENSOR_NAME=$1
+VALUE=$2
+
+if [ ! -d "$SENSOR_DIR" ]; then
+  mkdir -p $SENSOR_DIR
+fi 
+
+echo $VALUE > $SENSOR_DIR/$SENSOR_NAME

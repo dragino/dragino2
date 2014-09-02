@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # OpenWrt version: Attitude Adjustment (r36422)
-# Mon Aug 18 17:00:38 2014
+# Mon Sep  1 12:54:45 2014
 #
 CONFIG_HAVE_DOT_CONFIG=y
 # CONFIG_TARGET_ppc40x is not set
@@ -3031,7 +3031,7 @@ CONFIG_PACKAGE_chat=y
 # CONFIG_PACKAGE_faifa is not set
 # CONFIG_PACKAGE_fakeidentd is not set
 # CONFIG_PACKAGE_flow-tools is not set
-# CONFIG_PACKAGE_fping is not set
+CONFIG_PACKAGE_fping=y
 # CONFIG_PACKAGE_fprobe is not set
 # CONFIG_PACKAGE_fprobe-ulog is not set
 # CONFIG_PACKAGE_freeradius2 is not set
