@@ -19,7 +19,7 @@ m = Map("secn", translate("Small Enterprise-Campus Network"))
 s = m:section(NamedSection, "accesspoint", "secn", translate("Access Point"))
 s.addremove = false
 
-local ad = s:option(Flag, "ap_disable", "Enable WiFi AP",
+local ad = s:option(Flag, "ap_disable", translate("<abbr title=\"This option will be set Disable if select WiFi as WAN interface\">Enable WiFi AP</abbr>"),
 	"Enable WiFi AP")
 ad.enabled  = "0"
 ad.disabled = "1"

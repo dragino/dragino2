@@ -23,7 +23,7 @@ m:chain("network")
 m:chain("wireless")
 
 s = m:section(NamedSection, "mesh", "secn", translate("Mesh Setting"), "Mesh devices should have the same WiFi Channel, SSID and BSSID to communicate with others")
-local me = s:option(Flag, "mesh_enable", "Enable Mesh","Enable Mesh Network")
+local me = s:option(Flag, "mesh_enable", translate("<abbr title=\"This option will be set Disable if select WiFi as WAN interface\">Enable Mesh</abbr>"),"Enable Mesh Network")
 me.enabled  = "1"
 me.disabled = "0"
 me.default  = me.disable

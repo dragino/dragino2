@@ -18,5 +18,6 @@ module("luci.controller.admin.sensor", package.seeall)
 
 function index()
 	entry({"admin", "sensor"}, alias("admin", "sensor", "service"), _("Sensor"), 30).index = true
-	entry({"admin", "sensor", "service"}, cbi("admin_sensor/service"), _("IoT Service"), 1)
+	entry({"admin", "sensor", "mcu"}, cbi("admin_sensor/mcu"), _("MCU and UART"), 1)
+	entry({"admin", "sensor", "service"}, cbi("admin_sensor/service"), _("IoT Service"), 2)
 end

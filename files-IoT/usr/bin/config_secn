@@ -179,6 +179,7 @@ if [ $WANPORT = "WiFi" ]; then
 
 	# Disable WiFi AP mode
 	uci set wireless.ap_0.disabled='1'
+	uci set secn.accesspoint.ap_disable='1'
 	# Disable mesh
 	uci set secn.mesh.mesh_enable='0'
 	MESH_ENABLE='0'

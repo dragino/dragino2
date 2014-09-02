@@ -41,9 +41,6 @@ define Package/dragino2/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/etc/init.d/dragino.init $(1)/etc/init.d/dragino
 
-	$(INSTALL_DIR) $(1)/etc/arduino/ATmegaBoot
-	$(CP) $(PKG_BUILD_DIR)/etc/arduino/* $(1)/etc/arduino/
-
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_DIR) $(1)/usr/lib/lua/dragino/iot
 	$(CP) $(PKG_BUILD_DIR)/usr/* $(1)/usr/

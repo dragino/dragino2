@@ -87,6 +87,10 @@ dns.rmempty = true
 dns.datatype = "host"
 dns.placeholder = "DNS server domain or IP"
 
+local ph = s:option(Value, "pinghost", translate("<abbr title=\"Display connection to host and indicate via GLOBAL led. \nDisable if blank\">Display Net Connection</abbr>"),translate("Continusely Check Net Connection"))
+ph.datatype = "host"
+ph.placeholder = "Domain or IP"
+
 local pusr = s:option(Value, "username", translate("User Name"))
 pusr:depends("ethwanmode", "pppoe")
 pusr:depends("ethwanmode", "pptp")
