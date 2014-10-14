@@ -23,7 +23,7 @@ m = Map("sensor", translate("UART and MCU settings"), translate("Here you can co
 
 s = m:section(NamedSection, "mcu", "sensor", translate("UART and MCU settings"))
 local um= s:option(ListValue, "UARTmode", translate("UART Mode"),translate("Determine how the UART works. Require a reboot to take affect"))
-um:value("Bridge","Arduino Bridge")
+um:value("Bridge","Arduino Bridge(baud rate:115200)")
 um:value("PassThrough","UART Pass Through")
 um:value("Console","UART Console") 
 

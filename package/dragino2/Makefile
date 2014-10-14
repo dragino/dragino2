@@ -14,7 +14,7 @@ define Package/dragino2
   SECTION:=utils
   CATEGORY:=Utilities
   DEPENDS:=
-  TITLE:=Dragino -- OpenWrt Sensor Project
+  TITLE:=Dragino -- OpenWrt Sensor IoT Project
   URL:=http://www.dragino.com
   MAINTAINER:=Edwin Chen <edwin@dragino.com>
 endef

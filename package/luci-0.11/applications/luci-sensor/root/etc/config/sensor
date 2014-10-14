@@ -4,4 +4,7 @@ config settings 'service'
 	option update_interval '60'
 	option debug '0'
 
+config settings 'mcu'
+	option UARTmode 'Bridge'
+	option MCUProfile 'leonardo'
 
