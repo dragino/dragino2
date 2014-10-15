@@ -2,6 +2,8 @@
 # Copyright (c) 2012 Edwin Chen <edwin@dragino.com>
 
 START=98
+UARTMODE=`uci get sensor.poweruart.uartmode`
+
 load_config()
 {
 	 uci set system.@system[0].key=$(hexdump -v -e '1/1 "%.2x"' -s $((0x100)) -n 16 /dev/mtd5)
@@ -11,6 +13,8 @@ load_config()
 	 uci set system.@system[0].firstboot='0'
 	 uci commit
 }
+
+
 
 start()
 {
@@ -23,5 +27,31 @@ start()
 	then
 		load_config
 	fi
+	
+	[ ! -d /var/iot/channels ] && mkdir -p /var/iot/channels
+	load_uart
+}
 
+restart() {
+	load_uart
+}
+
+load_uart() {
+	
+	# Kill possible running daemon;
+	uartpid=`ps w| grep uart_routing | grep -v grep | awk '{print $1}'`
+	if [[ ! -z $uartpid ]]; then 
+		kill $uartpid
+	fi
+
+	if [ $UARTMODE = "routing" ]; then
+		/usr/bin/set_uart_console 0
+		BAUDRATE=`uci get sensor.poweruart.baudrate`
+		stty -F /dev/ttyATH0 $BAUDRATE clocal cread cs8 -cstopb -parenb
+		/usr/lib/lua/dragino/uart_routing.lua &		
+	elif [ $UARTMODE = "bridge" ]; then
+		/usr/bin/set_uart_console 1		
+	elif [ $UARTMODE = "noconsole" ]; then
+		/usr/bin/set_uart_console 0	
+	fi
 }

@@ -102,4 +102,10 @@ function get_sensor_data()
   return valuetable
 end
 
+--Set Sensor Values
+--@Set a sensor value
+function set_sensor_data(k,v)
+	os.execute('echo '..v..' > '..SENSOR_DIR..k)
+end
+
 return M

@@ -5,6 +5,10 @@ config settings 'service'
 	option debug '0'
 
 config settings 'mcu'
-	option UARTmode 'Bridge'
 	option MCUProfile 'leonardo'
+
+config settings 'poweruart'
+	option uartmode 'bridge'
+	option baudrate '115200'
+
 
