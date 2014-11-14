@@ -95,8 +95,8 @@ EOF
 # Get modem params
 SERVICE=`uci get secn.modem.service`
 APN=`uci get secn.modem.apn`
-APNUSER=`uci get secn.modem.username`
-APNPW=`uci get secn.modem.password`
+APNUSER=`uci get secn.modem.user`
+APNPW=`uci get secn.modem.pass`
 PIN=`uci get secn.modem.pin`
 MODEMPORT=`uci get secn.modem.modemport`
 

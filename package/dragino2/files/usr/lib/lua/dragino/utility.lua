@@ -23,7 +23,7 @@ local type,assert,print,pairs,string,io,os,table = type,assert,print,pairs,strin
 
 local uci = require("luci.model.uci")
 local util = require("luci.util")
-local fs = require("luci.fs")
+local luci_fs = require("luci.fs")
 
 setfenv(1,M)
 
@@ -83,13 +83,13 @@ function getUSBInfo()
 end
 
 --Retreive Sensor Values
---@return a sensor table, Vendor ID and Product ID
+--@return a sensor value table
 function get_sensor_data()
   local valuetable = {}
   uci:foreach("sensor","channels",
     function (section)
 	if section.class == 'sensor' and section.id and section.type and section.remoteID then
-	  if fs.isfile(SENSOR_DIR .. section[".name"]) then 
+	  if luci_fs.isfile(SENSOR_DIR .. section[".name"]) then 
 	    local value = util.trim(util.exec("tail -n 1 " .. SENSOR_DIR .. section[".name"]))
 	    if value ~= nil and value ~= "" then
 		section.value = value
@@ -106,6 +106,22 @@ end
 --@Set a sensor value
 function set_sensor_data(k,v)
 	os.execute('echo '..v..' > '..SENSOR_DIR..k)
+end
+
+--Retreive Channels Values
+--@return channel value table from sensor directory
+function get_channel_value()
+	local valuetable = {}
+	local files = luci_fs.dir(SENSOR_DIR)
+	for k,v in pairs(files) do 
+		if luci_fs.isfile(SENSOR_DIR..v) then 
+			local value = util.trim(util.exec("tail -n 1 " .. SENSOR_DIR..v))
+			if value ~= nil and value ~= "" then
+				valuetable[v]=value
+			end
+		end
+	end
+  return valuetable
 end
 
 return M
