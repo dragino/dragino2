@@ -109,8 +109,8 @@ function set_sensor_data(k,v)
 end
 
 --Retreive Channels Values
---@return channel value table from sensor directory
-function get_channel_value()
+--@return channel value table {channel1=value1,channel2=value2....} from sensor directory
+function get_channels_valuetable()
 	local valuetable = {}
 	local files = luci_fs.dir(SENSOR_DIR)
 	for k,v in pairs(files) do 
@@ -122,6 +122,31 @@ function get_channel_value()
 		end
 	end
   return valuetable
+end
+
+--Retreive Value for a single channel
+--@return single channel value from sensor directory
+function get_channel_value(channel_id)
+	local channel_path = SENSOR_DIR..channel_id
+	if luci_fs.isfile(channel_path) then 
+		local value = util.trim(util.exec("tail -n 1 " .. channel_path))
+		if value ~= nil and value ~= "" then
+			return value
+		end	
+	end
+	return nil
+end
+
+--Get All UART Channels
+--@return uart channel table from sensor config
+function get_uart_channel_names()
+	local uart_channels = {}
+	uci:foreach("sensor","channels",
+		function (section)
+			table.insert(uart_channels,section[".name"])
+		end
+	)
+	return uart_channels
 end
 
 return M

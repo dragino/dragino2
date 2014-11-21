@@ -21,4 +21,5 @@ function index()
 	entry({"admin", "sensor", "poweruart"}, cbi("admin_sensor/poweruart"), _("PowerUART"), 1)
 	entry({"admin", "sensor", "mcu"}, cbi("admin_sensor/mcu"), _("MicroController"), 1)
 	entry({"admin", "sensor", "service"}, cbi("admin_sensor/service"), _("IoT Service"), 2)
+	entry({"admin", "sensor", "service","xively"}, cbi("admin_sensor/xively"), _("Xively Server"), 2)
 end

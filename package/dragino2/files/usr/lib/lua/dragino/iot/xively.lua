@@ -35,7 +35,6 @@ setfenv(1,M)
 uci = uci.cursor()
 local TOP_URL = 'https://api.xively.com'
 local SENSOR_DIR = '/var/iot/channels/'
-local account = uci:get_all("IoT-Service","Xively")
 local debug = uci:get("sensor","service","debug")
 debug = tonumber(debug)
 local logger = utility.logger
@@ -44,13 +43,20 @@ local logger = utility.logger
 --@return sensor_table which can be used for post_data
 function collect_sensor_data()
   local valuetable = {}
-  local t = utility.get_sensor_data()
-  for k,v in pairs(t) do
-    local n = #valuetable+1
-    valuetable[n]={}
-    valuetable[n].id= v.remoteID
-    valuetable[n].current_value = v.value
-  end
+  local value
+  uci:foreach("xively","channels",
+		function (section)
+			if section["class"] == 'upload' then
+				local value = utility.get_channel_value(section["id"])
+				if value ~= nil then 
+					local n = #valuetable+1
+					valuetable[n]={}
+					valuetable[n].id= section.remoteID
+					valuetable[n].current_value = value		
+				end
+			end
+		end
+  )
   return valuetable
 end
 
@@ -93,11 +99,9 @@ end
 
 --upload data handler
 --@return code return code
-function update_data()
+function update_data(apiKey,feed)
   local datastream = collect_sensor_data()
-  local apiKey = account.ApiKEY
-  local feed = account.Feed
-  post_data(apiKey, feed,datastream)
+  post_data(apiKey,feed,datastream)
 end
 
 

@@ -21,6 +21,7 @@ fi
 
 REPO_PATH=$(pwd)
 OPENWRT_PATH=$1
+REVISION=43274
 
 echo " "
 echo " Get SECN 2 packages from GitHub repo"
@@ -30,7 +31,7 @@ echo " "
 echo "*** Checkout the OpenWRT build environment to the path specified on the command line"
 sleep 5
 mkdir -p $OPENWRT_PATH
-svn co svn://svn.openwrt.org/openwrt/tags/attitude_adjustment_12.09/ $OPENWRT_PATH
+svn checkout --revision=$REVISION svn://svn.openwrt.org/openwrt/branches/attitude_adjustment/ $OPENWRT_PATH
 
 echo "*** Backup original feeds files if they exist"
 sleep 2

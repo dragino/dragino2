@@ -53,7 +53,7 @@ for CHECK_NET_PID in `echo $PID_LIST`; do
 done
 
 if [ ! -z "$PINGHOST" ]; then
-  check_net_status "$PINGHOST" &
+  check_net_status "$PINGHOST" 2>/dev/null &
 fi
 
 
