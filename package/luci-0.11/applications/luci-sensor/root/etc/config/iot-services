@@ -1,0 +1,10 @@
+
+config settings 'general'
+	option debug '0'
+
+config server 'xively'
+	option display '1'
+	option enable '1'
+	option routine_script 'xively_routine.lua'
+
+

@@ -5,6 +5,12 @@ config secn
 config sensor
 	option init dragino
 	
+config iot-services
+	option init iotd
+	
+config xively
+	list affects iot-services
+	
 config network
 	option init network
 	list affects dhcp

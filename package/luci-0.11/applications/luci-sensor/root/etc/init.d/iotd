@@ -1,0 +1,31 @@
+#!/bin/sh /etc/rc.common
+# Copyright (c) 2014 Edwin Chen <edwin@dragino.com>
+
+START=99
+IOT_DIR='/etc/iot/scripts/'
+
+start()
+{
+	start_iot_services
+}
+
+restart()
+{
+	start_iot_services
+}
+
+start_iot_services()
+{
+	#get enabled iot service and start the routine
+	SERVICE=`uci show iot-services | grep 'enable' | awk -F . '{print $2}'`
+	for serv in $SERVICE; do
+		script_name=`uci get iot-services.xively.routine_script`
+		script=$IOT_DIR$script_name
+		# Kill possible running daemon;
+		servpid=`ps w| grep $script | grep -v grep | awk '{print $1}'`
+		if [[ ! -z $servpid ]]; then 
+			kill $servpid
+		fi
+		lua $script &
+	done
+}

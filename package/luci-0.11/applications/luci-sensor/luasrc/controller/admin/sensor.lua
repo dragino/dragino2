@@ -17,9 +17,18 @@ $Id$
 module("luci.controller.admin.sensor", package.seeall)
 
 function index()
+	local uci = luci.model.uci.cursor()
+	local string =string
 	entry({"admin", "sensor"}, alias("admin", "sensor", "service"), _("Sensor"), 30).index = true
-	entry({"admin", "sensor", "poweruart"}, cbi("admin_sensor/poweruart"), _("PowerUART"), 1)
-	entry({"admin", "sensor", "mcu"}, cbi("admin_sensor/mcu"), _("MicroController"), 1)
-	entry({"admin", "sensor", "service"}, cbi("admin_sensor/service"), _("IoT Service"), 2)
-	entry({"admin", "sensor", "service","xively"}, cbi("admin_sensor/xively"), _("Xively Server"), 2)
+	entry({"admin", "sensor", "poweruart"}, cbi("admin_sensor/poweruart"), _("PowerUART"), 2)
+	entry({"admin", "sensor", "mcu"}, cbi("admin_sensor/mcu"), _("MicroController"), 3)
+	entry({"admin", "sensor", "service"}, cbi("admin_sensor/service"), _("IoT Service"), 1)
+	uci:foreach("iot-services","server",
+	function (section)
+		if section["display"] == '1' then
+			entry({"admin", "sensor", "service",section[".name"]}, cbi("admin_sensor/"..section[".name"]), _(string.upper(section[".name"])), 2)
+		end
+	end
+	)
+	
 end
