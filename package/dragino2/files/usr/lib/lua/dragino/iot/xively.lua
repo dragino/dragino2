@@ -35,8 +35,7 @@ setfenv(1,M)
 uci = uci.cursor()
 local TOP_URL = 'https://api.xively.com'
 local SENSOR_DIR = '/var/iot/channels/'
-local debug = uci:get("sensor","service","debug")
-debug = tonumber(debug)
+local debug = tonumber(uci:get("iot-services","general","debug"))
 local logger = utility.logger
 
 --get sensor data
