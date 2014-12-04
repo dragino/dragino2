@@ -1,0 +1,8 @@
+
+config settings 'general'
+	option server_address ''
+	option server_port ''
+	option update_interval ''
+	option keep_alive_interval ''
+
+
