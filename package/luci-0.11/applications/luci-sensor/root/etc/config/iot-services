@@ -4,7 +4,11 @@ config settings 'general'
 
 config server 'xively'
 	option display '1'
-	option enable '1'
 	option routine_script 'xively_routine.lua'
+	option enable '0'
 
+config server 'tcp_client'
+	option display '1'
+	option enable '0'
+	option routine_script 'tcp_client.lua'
 

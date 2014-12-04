@@ -149,4 +149,19 @@ function get_uart_channel_names()
 	return uart_channels
 end
 
+
+--Dispatch data to Sensor File base on a pattern
+function Dispatch_Data_to_Sensor_Channel(raw,channel_table)
+	if raw == nil or util.trim(raw) == '' then return end
+	logger('Raw: ' .. raw)
+	for k,v in pairs(channel_table) do
+		local mat1 = string.match(raw,v.pattern) -- match valid data pattern from each Sensor
+		if mat1 ~= nil then
+			set_sensor_data(v['id'],mat1)
+			logger('Store: ' .. v['id']..' '..mat1)
+		end
+	end
+end
+
+
 return M

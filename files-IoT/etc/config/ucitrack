@@ -10,6 +10,9 @@ config iot-services
 	
 config xively
 	list affects iot-services
+
+config tcp_client
+	list affects iot-services
 	
 config network
 	option init network

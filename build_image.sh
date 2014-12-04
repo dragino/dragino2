@@ -27,7 +27,7 @@ then
 APP=$2
 fi
 
-VERSION=1.3.1
+VERSION=1.3.2
 BUILD=$APP-$VERSION
 BUILD_TIME="`date`"
 
