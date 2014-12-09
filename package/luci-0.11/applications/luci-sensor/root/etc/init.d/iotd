@@ -17,15 +17,26 @@ restart()
 start_iot_services()
 {
 	#get enabled iot service and start the routine
-	SERVICE=`uci show iot-services | grep 'enable=1' | awk -F . '{print $2}'`
+	SERVICE=`uci show iot-services | grep 'enable' | awk -F . '{print $2}'`
 	for serv in $SERVICE; do
 		script_name=`uci get iot-services.$serv.routine_script`
+		enable_service=`uci get iot-services.$serv.enable`
 		script=$IOT_DIR$script_name
+		
 		# Kill possible running daemon;
 		servpid=`ps w| grep $script | grep -v grep | awk '{print $1}'`
 		if [[ ! -z $servpid ]]; then 
 			kill $servpid
 		fi
-		lua $script &
+		
+		#start services 
+		if [ $enable_service -eq 1 ]; then
+			#check script type
+			if [ "${script%.lua}" != "$script" ]; then
+				lua $script &
+			else
+				$script &
+			fi 
+		fi
 	done
 }

@@ -125,13 +125,13 @@ function get_channels_valuetable()
 end
 
 --Retreive Value for a single channel
---@return single channel value from sensor directory
+--@return single channel value and update time from sensor directory
 function get_channel_value(channel_id)
 	local channel_path = SENSOR_DIR..channel_id
 	if luci_fs.isfile(channel_path) then 
 		local value = util.trim(util.exec("tail -n 1 " .. channel_path))
 		if value ~= nil and value ~= "" then
-			return value
+			return value, luci_fs.mtime(channel_path)
 		end	
 	end
 	return nil

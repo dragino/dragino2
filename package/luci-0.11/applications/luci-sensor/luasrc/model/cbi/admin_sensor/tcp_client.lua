@@ -37,15 +37,16 @@ serverip.datatype = "host"
 local serverport = s:option(Value, "server_port", translate("Server Port"))
 serverport.datatype = "uinteger"
 
-local ui = s:option(Value, "update_interval", translate("Update Interval"),translate("unit:seconds"))
+local ui = s:option(Value, "update_interval", translate("Update Interval"),translate("unit:seconds. Set to 0 to disable periodically update"))
 ui.placeholder = translate("how often update data to server") 
 ui.default = '60'
 ui.datatype = "uinteger"
 
-local ki = s:option(Value, "keep_alive_interval", translate("Keep Alive"),translate("Detect connection to server, reconnect if fail. unit:seconds"))
-ki.placeholder = translate("send a keep-alive message to server") 
-ki.default = '60'
-ki.datatype = "uinteger"
+local uo = s:option(Flag, "update_onchange", translate("Update on Change"),translate("Send to server when a new value arrive"))
+uo.enabled  = "1"
+uo.disabled = "0"
+uo.default  = uo.enabled
+uo.rmempty  = false
 
 s = m:section(TypedSection, "channels", translate("Channels"),translate("Channels to be monitored or controlled"))
 s.addremove = true
