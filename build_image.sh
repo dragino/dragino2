@@ -22,78 +22,98 @@ fi
 REPO_PATH=$(pwd)
 OPENWRT_PATH=$1
 APP=IoT
-if [ $2 ]
-then 
-APP=$2
+if [ $2 ];then 
+	APP=$2
+	if [ -d files-$APP ] || [ -f .config.$APP ]; then
+		#########################
+		echo ''
+		echo "Start build process for application $APP"
+		echo ''
+		###########################
+	else
+		echo ''
+		echo 'APP directory or .config are not existing'
+		echo 'Make sure you ahve type the correct app name'
+		echo ''
+		exit 0
+	fi
 fi
 
-VERSION=1.3.3
+VERSION=1.3.4
 BUILD=$APP-$VERSION
 BUILD_TIME="`date`"
-
-#########################
-echo ''
-echo "Start build process for application $APP"
-echo ''
-###########################
 
 #echo "#remove tmp directory"
 #rm -rf $OPENWRT_PATH/tmp/
 
-echo ""
-echo "Remove custom files from last build"
-rm -rf $OPENWRT_PATH/files
+if [ -d files-$APP ];then
+	echo ""
+	echo "***Find customized $APP files.***"
+	echo "Remove custom files from last build"
+	rm -rf $OPENWRT_PATH/files
+	echo "Copy files-$APP to default files directory"
+	echo ""
+	cp -r files-$APP $OPENWRT_PATH/files
+else 
+	echo ""
+fi
+
+if [ -f .config.$APP ];then
+	echo ""
+	echo "***Find customized .config files***"
+	echo "Replace default .config file with .config.$APP"
+	echo ""
+	cp .config.$APP $OPENWRT_PATH/.config
+fi
 
 echo ""
-echo "Copy config and files"
-echo ""
-cp .config.$APP $OPENWRT_PATH/.config
-cp -r files-$APP $OPENWRT_PATH/files
-
-echo ""
-echo "Entering build directory"
+echo "***Entering build directory***"
 cd $OPENWRT_PATH
 echo ""
 
 echo ""
-echo "Update version and build date"
+echo "***Update version and build date***"
 sed -i "s/VERSION/$BUILD/g" files/etc/banner
 sed -i "s/TIME/$BUILD_TIME/g" files/etc/banner
 echo ""
 
 
 echo ""
-echo "Activate draigno config as default config"
+echo "***Activate $APP config as default config***"
 echo " Run defconfig"
+echo ""
 make defconfig > /dev/null
 
 echo ""
-echo "Run make for ms14"
+echo "***Run make for ms14***"
 make -j8 V=99
 
-echo "Copy Image"
+echo ""
+echo "***Build Finish, Copy Image***"
 if [ ! -d $REPO_PATH/image ]
 then
 mkdir $REPO_PATH/image
 fi
 
-echo "Set up new directory name with date"
+echo ""
+echo "***Set up new directory name with date***"
 DATE=`date +%Y%m%d-%H%M`
 mkdir $REPO_PATH/image/$APP-build--v$VERSION--$DATE
 IMAGE_DIR=$REPO_PATH/image/$APP-build--v$VERSION--$DATE
 
-echo  "Move files to ./image folder"
+echo ""
+echo  "***Move files to ./image folder***"
 mv ./bin/ar71xx/openwrt*kernel.bin     $IMAGE_DIR/
 mv ./bin/ar71xx/openwrt*squashfs.bin   $IMAGE_DIR/
 mv ./bin/ar71xx/openwrt*sysupgrade.bin $IMAGE_DIR/
 
-echo "Update md5sums"
+echo ""
+echo "***Update md5sums***"
 cat ./bin/ar71xx/md5sums | grep "dragino2" >> $IMAGE_DIR/md5sums
 
 
 echo ""
 echo "Back Up Custom Config to Image DIR"
-echo ""
 mkdir $IMAGE_DIR/custom_config
 cp $REPO_PATH/.config.$APP $IMAGE_DIR/custom_config/.config
 cp -r $REPO_PATH/files-$APP $IMAGE_DIR/custom_config/files
