@@ -88,6 +88,17 @@ echo ""
 echo "***Run make for ms14***"
 make -j8 V=99
 
+
+if [ ! -f ./bin/ar71xx/openwrt-ar71xx-generic-dragino2-squashfs-sysupgrade.bin ];then
+	echo ""
+	echo "Build Fails, run below commands to build the image in single thread and check what is wrong"
+	echo "**************"
+	echo "	cd ms14"
+	echo "	make V=s"
+	echo "**************"
+	exit
+fi
+
 echo ""
 echo "***Build Finish, Copy Image***"
 if [ ! -d $REPO_PATH/image ]
@@ -102,18 +113,18 @@ mkdir $REPO_PATH/image/$APP-build--v$VERSION--$DATE
 IMAGE_DIR=$REPO_PATH/image/$APP-build--v$VERSION--$DATE
 
 echo ""
-echo  "***Move files to ./image folder***"
-mv ./bin/ar71xx/openwrt*kernel.bin     $IMAGE_DIR/
-mv ./bin/ar71xx/openwrt*squashfs.bin   $IMAGE_DIR/
-mv ./bin/ar71xx/openwrt*sysupgrade.bin $IMAGE_DIR/
+echo  "***Move files to /image/$APP-build--v$VERSION--$DATE ***"
+cp ./bin/ar71xx/openwrt-ar71xx-generic-dragino2-kernel.bin     $IMAGE_DIR/dragino2-$APP-v$VERSION-kernel.bin
+cp ./bin/ar71xx/openwrt-ar71xx-generic-dragino2-rootfs-squashfs.bin   $IMAGE_DIR/dragino2-$APP-v$VERSION-rootfs-squashfs.bin
+cp ./bin/ar71xx/openwrt-ar71xx-generic-dragino2-squashfs-sysupgrade.bin $IMAGE_DIR/dragino2-$APP-v$VERSION-squashfs-sysupgrade.bin
+
 
 echo ""
 echo "***Update md5sums***"
-cat ./bin/ar71xx/md5sums | grep "dragino2" >> $IMAGE_DIR/md5sums
-
+cat ./bin/ar71xx/md5sums | grep "dragino2" | awk '{gsub(/openwrt-ar71xx-generic-dragino2/,"dragino2-'"$APP"'-v'"$VERSION"'")}{print}' >> $IMAGE_DIR/md5sums
 
 echo ""
-echo "Back Up Custom Config to Image DIR"
+echo "***Back Up Custom Config to Image DIR***"
 mkdir $IMAGE_DIR/custom_config
 cp $REPO_PATH/.config.$APP $IMAGE_DIR/custom_config/.config
 cp -r $REPO_PATH/files-$APP $IMAGE_DIR/custom_config/files
