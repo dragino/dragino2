@@ -1,0 +1,8 @@
+#!/bin/sh
+
+logger "reset mcu"
+echo 20 > /sys/class/gpio/export
+echo "high" > /sys/class/gpio/gpio20/direction
+echo 1 > /sys/class/gpio/gpio20/value
+echo 0 > /sys/class/gpio/gpio20/value
+echo 20 > /sys/class/gpio/unexport
