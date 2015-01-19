@@ -1,8 +1,0 @@
-#!/bin/sh /etc/rc.common
-# Copyright (C) 2013 switchvoice Ltd
-
-START=42
-start() {
-	insmod /lib/modules/3.3.8/dfxs.ko debug=2;
-	dahdi_cfg -vvvv;
-}

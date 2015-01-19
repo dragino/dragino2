@@ -23,9 +23,6 @@ REPO_PATH=$(pwd)
 OPENWRT_PATH=$1
 REVISION=43274
 
-echo " "
-echo " Get SECN 2 packages from GitHub repo"
-git clone https://github.com/villagetelco/vt-secn2-packages vt-secn2-packages
 
 echo " "
 echo "*** Checkout the OpenWRT build environment to the path specified on the command line"
@@ -40,7 +37,8 @@ mv $OPENWRT_PATH/feeds.conf.default  $OPENWRT_PATH/feeds.conf.default.bak
 echo "*** Create new feeds.conf.default file"
 echo "src-link  packages1209 $REPO_PATH/packages_12.09"      > $OPENWRT_PATH/feeds.conf.default
 echo "src-link dragino2 $REPO_PATH/package" >> $OPENWRT_PATH/feeds.conf.default
-echo "src-link secn2packages $REPO_PATH/vt-secn2-packages/packages-AA" >> $OPENWRT_PATH/feeds.conf.default
+echo "src-git fxs git://github.com/villagetelco/vt-fxs-packages.git;for-12.09.x"   >> $OPENWRT_PATH/feeds.conf.default
+echo "src-git routing git://github.com/openwrt-routing/packages.git;for-12.09.x" >> $OPENWRT_PATH/feeds.conf.default
 
 echo " "
 

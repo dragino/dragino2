@@ -113,7 +113,7 @@ mkdir $REPO_PATH/image/$APP-build--v$VERSION--$DATE
 IMAGE_DIR=$REPO_PATH/image/$APP-build--v$VERSION--$DATE
 
 echo ""
-echo  "***Move files to /image/$APP-build--v$VERSION--$DATE ***"
+echo  "***Move files to ./image/$APP-build--v$VERSION--$DATE ***"
 cp ./bin/ar71xx/openwrt-ar71xx-generic-dragino2-kernel.bin     $IMAGE_DIR/dragino2-$APP-v$VERSION-kernel.bin
 cp ./bin/ar71xx/openwrt-ar71xx-generic-dragino2-rootfs-squashfs.bin   $IMAGE_DIR/dragino2-$APP-v$VERSION-rootfs-squashfs.bin
 cp ./bin/ar71xx/openwrt-ar71xx-generic-dragino2-squashfs-sysupgrade.bin $IMAGE_DIR/dragino2-$APP-v$VERSION-squashfs-sysupgrade.bin

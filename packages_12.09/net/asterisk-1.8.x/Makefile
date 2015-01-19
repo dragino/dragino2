@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013 OpenWrt.org
+# Copyright (C) 2008-2012 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=asterisk18
 PKG_VERSION:=1.8.10.1
-PKG_RELEASE:=8
+PKG_RELEASE:=2
 
 PKG_SOURCE:=asterisk-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://downloads.asterisk.org/pub/telephony/asterisk/releases/
@@ -34,15 +34,13 @@ define Package/asterisk18/Default/description
  equipment using relatively inexpensive hardware.
 endef
 
+
 define Package/asterisk18
 $(call Package/asterisk18/Default)
   TITLE:=Complete open source PBX, v1.8x
   MENU:=1
-#  DEPENDS:= +libtonezone +libopenssl +libncurses +libpopt +libpthread +zlib @!TARGET_avr32
-  DEPENDS:= +dahdi-tools-libtonezone +libopenssl +libncurses +libpopt +libpthread +zlib 
+  DEPENDS:= +dahdi-tools-libtonezone +libopenssl +libncurses +libpopt +libpthread +zlib @!TARGET_avr32
 endef
-
-#DEPENDS:= +libtonezone 
 
 define Package/asterisk18/description
 $(call Package/asterisk18/Default/description)
@@ -97,24 +95,12 @@ endef
 define Package/asterisk18-cdr
 $(call Package/asterisk18/Default)
   TITLE:=CDR support
-  DEPENDS:= asterisk18
+  DEPENDS:= asterisk18 @BROKEN
 endef
 
 define Package/asterisk18-cdr/description
 $(call Package/asterisk18/Default/description)
  This package provides Call Detail Record support to
- Asterisk.
-endef
-
-define Package/asterisk18-pgsql
-$(call Package/asterisk18/Default)
-  TITLE:=PostgreSQL support
-  DEPENDS:= asterisk18 +libpq
-endef
-
-define Package/asterisk18-pgsql/description
-$(call Package/asterisk18/Default/description)
- This package provides PostgreSQL support to
  Asterisk.
 endef
 
@@ -248,38 +234,13 @@ $(call Package/asterisk18/Default/description)
  This package provides the channel chan_lantiq support to Asterisk.
 endef
 
-define Package/asterisk18-odbc
-$(call Package/asterisk18/Default)
-  TITLE:=ODBC support
-  DEPENDS:= asterisk18 +libpthread +libc +unixodbc
-endef
-
-define Package/asterisk18-odbc/description
-$(call Package/asterisk18/Default/description)
- This package provides ODBC support for Asterisk.
-endef
-
-define Package/asterisk18-pbx-lua
-$(call Package/asterisk18/Default)
-  TITLE:=Lua support
-  DEPENDS:= asterisk18 +libpthread +libc +liblua
-endef
-
-define Package/asterisk18-pbx-lua/description
-$(call Package/asterisk18/Default/description)
- This package provides Lua resources for Asterisk.
-endef
-
-#ifneq ($(SDK)$(CONFIG_PACKAGE_asterisk18-app-meetme),)
-#  CONFIGURE_ARGS+= \
-#	--with-dahdi="$(STAGING_DIR)/usr" \
-#	--with-tonezone="$(STAGING_DIR)/usr"
-#else
-#  CONFIGURE_ARGS+= \
-#	--without-dahdi \
-#	--without-tonezone
-#
-#endif
+ifneq ($(SDK)$(CONFIG_PACKAGE_asterisk18-app-meetme),)
+  CONFIGURE_ARGS+= \
+	--with-dahdi="$(STAGING_DIR)/usr"
+else
+  CONFIGURE_ARGS+= \
+	--without-dahdi
+endif
 
 ifneq ($(SDK)$(CONFIG_PACKAGE_asterisk18-chan-gtalk),)
   CONFIGURE_ARGS+= \
@@ -300,14 +261,6 @@ ifneq ($(SDK)$(CONFIG_PACKAGE_asterisk18-curl),)
 else
   CONFIGURE_ARGS+= \
 	--without-curl
-endif
-
-ifneq ($(SDK)$(CONFIG_PACKAGE_asterisk18-pgsql),)
-  CONFIGURE_ARGS+= \
-	--with-postgres="$(STAGING_DIR)/usr"
-else
-  CONFIGURE_ARGS+= \
-	--without-postgres
 endif
 
 ifneq ($(SDK)$(CONFIG_PACKAGE_asterisk18-mysql),)
@@ -342,15 +295,6 @@ else
 	--without-srtp
 endif
 
-ifneq ($(SDK)$(CONFIG_PACKAGE_asterisk18-pbx-lua),)
-  CONFIGURE_ARGS+= \
-	--with-lua="$(STAGING_DIR)/usr"
-  TARGET_LDFLAGS+=-ldl -lcrypt
-else
-  CONFIGURE_ARGS+= \
-	--without-pbx-lua
-endif
-
 CONFIGURE_ARGS+= \
 	--without-curses \
 	--with-gsm=internal \
@@ -364,6 +308,7 @@ CONFIGURE_ARGS+= \
 	--with-ncurses="$(STAGING_DIR)/usr" \
 	--without-netsnmp \
 	--without-newt \
+	--without-odbc \
 	--without-ogg \
 	--without-osptk \
 	--with-popt="$(STAGING_DIR)/usr" \
@@ -380,8 +325,7 @@ CONFIGURE_ARGS+= \
 	--with-z="$(STAGING_DIR)/usr" \
 	--with-sounds-cache="$(DL_DIR)" \
 	--disable-xmldoc \
-	--with-dahdi="$(STAGING_DIR)/usr" \
-	--with-tonezone="$(STAGING_DIR)/usr"
+	--with-dahdi="$(STAGING_DIR)/usr"
 
 EXTRA_CFLAGS+= $(TARGET_CPPFLAGS)
 EXTRA_LDFLAGS+= $(TARGET_LDFLAGS)
@@ -446,7 +390,7 @@ define Package/asterisk18/install
 	done
 	$(INSTALL_DIR) $(1)/usr/lib/asterisk/modules
 	for f in app_dial app_echo app_playback app_macro \
-		chan_sip res_rtp_asterisk res_rtp_multicast chan_dahdi res_smdi \
+		chan_sip res_rtp_asterisk res_rtp_multicast \
 		codec_ulaw codec_gsm \
 		format_gsm format_pcm format_wav format_wav_gsm \
 		pbx_config \
@@ -507,7 +451,9 @@ define Package/asterisk18-cdr/conffiles
 /etc/asterisk/cdr.conf
 /etc/asterisk/cdr_custom.conf
 /etc/asterisk/cdr_manager.conf
-/etc/asterisk/cdr_syslog.conf
+/etc/asterisk/cdr_odbc.conf
+/etc/asterisk/cdr_pgsql.conf
+/etc/asterisk/cdr_tds.conf
 endef
 
 define Package/asterisk18-res-musiconhold/conffiles
@@ -524,23 +470,9 @@ endef
 
 define Package/asterisk18-cdr/install
 	$(INSTALL_DIR) $(1)/etc/asterisk
-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/etc/asterisk/{cdr,cdr_custom,cdr_manager,cdr_syslog}.conf $(1)/etc/asterisk/
+	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/etc/asterisk/cdr*.conf $(1)/etc/asterisk/
 	$(INSTALL_DIR) $(1)/usr/lib/asterisk/modules
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/lib/asterisk/modules/{app_,app_fork,func_}cdr.so $(1)/usr/lib/asterisk/modules/
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/lib/asterisk/modules/cdr_csv.so $(1)/usr/lib/asterisk/modules/
-endef
-
-define Package/asterisk18-pgsql/conffiles
-/etc/asterisk/cel_pgsql.conf
-/etc/asterisk/cdr_pgsql.conf
-/etc/asterisk/res_pgsql.conf
-endef
-
-define Package/asterisk18-pgsql/install
-	$(INSTALL_DIR) $(1)/etc/asterisk
-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/etc/asterisk/{cel,cdr,res}_pgsql.conf $(1)/etc/asterisk/
-	$(INSTALL_DIR) $(1)/usr/lib/asterisk/modules
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/lib/asterisk/modules/{cel,cdr,res_config}_pgsql.so $(1)/usr/lib/asterisk/modules/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/lib/asterisk/modules/*cdr*.so $(1)/usr/lib/asterisk/modules/
 endef
 
 define Package/asterisk18-res-musiconhold/install
@@ -663,28 +595,6 @@ define Package/asterisk18-res-srtp/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/lib/asterisk/modules/res_srtp.so $(1)/usr/lib/asterisk/modules/
 endef
 
-define Package/asterisk18-odbc/conffiles
-/etc/asterisk/cdr_adaptive_odbc.conf
-/etc/asterisk/cdr_odbc.conf
-/etc/asterisk/cel_odbc.conf
-/etc/asterisk/func_odbc.conf
-/etc/asterisk/res_odbc.conf
-endef
-
-define Package/asterisk18-odbc/install
-	$(INSTALL_DIR) $(1)/etc/asterisk
-	$(CP) $(PKG_INSTALL_DIR)/etc/asterisk/{cdr_adaptive,cdr,cel,func,res}_odbc.conf $(1)/etc/asterisk/
-	$(INSTALL_DIR) $(1)/usr/lib/asterisk/modules
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/asterisk/modules/{cdr_adaptive,cdr,cel,func,res_config,res}_odbc.so $(1)/usr/lib/asterisk/modules/
-endef
-
-define Package/asterisk18-pbx-lua/install
-	$(INSTALL_DIR) $(1)/etc/asterisk
-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/etc/asterisk/extensions.lua $(1)/etc/asterisk/
-	$(INSTALL_DIR) $(1)/usr/lib/asterisk/modules
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/lib/asterisk/modules/pbx_lua.so $(1)/usr/lib/asterisk/modules/
-endef
-
 define Buildasterisk18ModuleTemplate
 
   define Package/asterisk18-$(subst _,-,$(1))
@@ -715,9 +625,6 @@ $(eval $(call BuildPackage,asterisk18-cdr))
 $(eval $(call BuildPackage,asterisk18-res-musiconhold))
 $(eval $(call BuildPackage,asterisk18-chan-gtalk))
 $(eval $(call BuildPackage,asterisk18-chan-mobile))
-$(eval $(call BuildPackage,asterisk18-odbc))
-$(eval $(call BuildPackage,asterisk18-pgsql))
-$(eval $(call BuildPackage,asterisk18-pbx-lua))
 $(eval $(call BuildPackage,asterisk18-res-fax))
 $(eval $(call BuildPackage,asterisk18-res-fax-spandsp))
 $(eval $(call BuildPackage,asterisk18-res-timing-timerfd))
@@ -758,7 +665,6 @@ $(eval $(call Buildasterisk18ModuleTemplate,func_devstate,Blinky lights control,
 $(eval $(call Buildasterisk18ModuleTemplate,func_vmcount,vmcount dialplan,a vmcount dialplan function))
 $(eval $(call Buildasterisk18ModuleTemplate,func_extstate,Hinted extension state,retrieving the state of a hinted extension for dialplan control))
 $(eval $(call Buildasterisk18ModuleTemplate,func_global,Global variable,global variable dialplan functions))
-$(eval $(call Buildasterisk18ModuleTemplate,func_groupcount,Group count,Counts the number of channels in the specified group))
 $(eval $(call Buildasterisk18ModuleTemplate,func_shell,Shell,support for shell execution))
 $(eval $(call Buildasterisk18ModuleTemplate,pbx_ael,Asterisk Extension Logic,support for symbolic Asterisk Extension Logic))
 $(eval $(call Buildasterisk18ModuleTemplate,res_ael_share,Shareable AEL code,support for shareable AEL code mainly between internal and external modules))
