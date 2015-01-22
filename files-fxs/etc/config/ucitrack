@@ -1,7 +1,22 @@
 config secn
 	option exec /usr/bin/config_secn
 	list affects network
+	
+config rfgateway
+	option exec /usr/bin/reset-mcu
 
+config sensor
+	option init dragino
+	
+config iot-services
+	option init iotd
+	
+config xively
+	list affects iot-services
+
+config tcp_client
+	list affects iot-services
+	
 config network
 	option init network
 	list affects dhcp

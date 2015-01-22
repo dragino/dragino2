@@ -1,0 +1,96 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2014 Vittorio Gambaletta <openwrt@vittgam.net>
+
+START=61
+
+start() {
+	local debug="$(uci_get dragino2-si3217x.@fxs[0].debug)"
+	local opermode="$(uci_get dragino2-si3217x.@fxs[0].opermode)"
+	local tonezone="$(uci_get dragino2-si3217x.@fxs[0].tonezone)"
+	local signalling="$(uci_get dragino2-si3217x.@fxs[0].signalling)"
+	local txgain="$(uci_get dragino2-si3217x.@fxs[0].txgain)"
+	local rxgain="$(uci_get dragino2-si3217x.@fxs[0].rxgain)"
+	local rxflash="$(uci_get dragino2-si3217x.@fxs[0].rxflash)"
+	local immediate="$(uci_get dragino2-si3217x.@fxs[0].immediate)"
+	local mailbox="$(uci_get dragino2-si3217x.@fxs[0].mailbox)"
+	local mailboxcfg=""
+
+	# fixes for Attitude Adjustment that does not support AutoProbe
+	lsmod | grep -q 'dragino2_si3217x_proslic_api ' || insmod dragino2_si3217x_proslic_api
+	lsmod | grep -q 'dahdi ' || insmod dahdi
+	lsmod | grep -q 'echo ' || insmod echo
+	lsmod | grep -q 'dahdi_echocan_oslec ' || insmod dahdi_echocan_oslec
+
+	lsmod | grep -q 'dragino2_si3217x ' && rmmod dragino2_si3217x && sleep 1
+
+	insmod dragino2_si3217x debug="${debug:-0}" opermode="${opermode:-FCC}"
+
+	[ -n "$mailbox" ] && mailboxcfg="mwisendtype=rpas,lrev
+mailbox=${mailbox}
+mwi_mailboxes=${mailbox}
+"
+
+	cat > /tmp/dragino2-si3217x-asterisk-chan-dahdi.conf << EOF
+; In order to make use of this file in Asterisk, please replace the
+; /etc/asterisk/chan_dahdi.conf file with the following line (without the ';'):
+; #include /tmp/dragino2-si3217x-asterisk-chan-dahdi.conf
+
+[trunkgroups]
+[channels]
+usecallerid=yes
+hidecallerid=no
+usecallingpres=yes
+
+echocancel=64
+echocancelwhenbridged=no
+echotraining=no
+
+immediate=${immediate:-no}
+
+callwaiting=no
+threewaycalling=no
+transfer=no
+canpark=no
+
+mohinterpret=passthrough
+mohsuggest=passthrough
+
+language=${tonezone:-us}
+inband_on_setup_ack=yes
+inband_on_proceeding=yes
+inbanddisconnect=yes
+
+rxflash=${rxflash:-1250}
+
+$mailboxcfg
+
+txgain=${txgain:-0} ; to phone speaker
+rxgain=${rxgain:-0} ; from phone microphone
+
+context=incoming-local
+group=1
+signalling=fxo_${signalling:-ks}
+channel=1
+
+EOF
+
+	cat > /tmp/dragino2-si3217x-dahdi.conf << EOF
+loadzone = ${tonezone:-us}
+defaultzone = ${tonezone:-us}
+
+fxo${signalling:-ks} = 1
+mulaw = 1
+
+echocanceller = oslec,1
+EOF
+
+	dahdi_cfg -c /tmp/dragino2-si3217x-dahdi.conf -vvvv
+}
+
+stop() {
+	rmmod dragino2_si3217x
+}
+
+restart() {
+	stop && sleep 1 && start
+}

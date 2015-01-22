@@ -43,3 +43,17 @@ fi
 #---------------------------------------------
 
 
+#Start Net Connection Check 
+
+PINGHOST=`uci get secn.wan.pinghost`
+
+PID_LIST=`ps | grep "check_net_status" | grep -v grep | awk '{print $1}'`
+for CHECK_NET_PID in `echo $PID_LIST`; do
+  kill $CHECK_NET_PID
+done
+
+if [ ! -z "$PINGHOST" ]; then
+  check_net_status "$PINGHOST" 2>/dev/null &
+fi
+
+
