@@ -22,6 +22,7 @@ function index()
 	entry({"admin", "sensor"}, alias("admin", "sensor", "service"), _("Sensor"), 30).index = true
 	entry({"admin", "sensor", "poweruart"}, cbi("admin_sensor/poweruart"), _("PowerUART"), 2)
 	entry({"admin", "sensor", "mcu"}, cbi("admin_sensor/mcu"), _("MicroController"), 3)
+	entry({"admin", "sensor", "rfgateway"}, cbi("admin_sensor/rfgateway"), _("RF Radio Gateway"), 4)
 	entry({"admin", "sensor", "service"}, cbi("admin_sensor/service"), _("IoT Service"), 1)
 	uci:foreach("iot-services","server",
 	function (section)

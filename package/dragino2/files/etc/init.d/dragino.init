@@ -18,8 +18,11 @@ load_config()
 
 start()
 {
-	echo 24 > /sys/class/gpio/export
-	echo "high" > /sys/class/gpio/gpio24/direction
+	# FXS module version
+	if [ ! -f /lib/modules/3.3.8/dragino2_si3217x.ko ]; then
+		echo 24 > /sys/class/gpio/export
+		echo "high" > /sys/class/gpio/gpio24/direction
+	fi
 
 	FIRSTBOOT=$(uci get system.@system[0].firstboot)
 

@@ -55,7 +55,7 @@ end
 local ass = s:option(Value, "maxassoc", "AP Connections")
 ass.default= "30"
 ass.rmempty  = false
-ass.datatype = "range(0,35)"
-ass.placeholder = "a number from 0 to 35,0 means disable"
+ass.datatype = "range(0,60)"
+ass.placeholder = "a number from 0 to 60,0 means disable"
 
 return m

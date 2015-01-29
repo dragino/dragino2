@@ -1,6 +1,9 @@
 config secn
 	option exec /usr/bin/config_secn
 	list affects network
+	
+config rfgateway
+	option exec /usr/bin/reset-mcu
 
 config sensor
 	option init dragino

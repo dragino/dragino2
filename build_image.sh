@@ -1,29 +1,45 @@
 #!/usr/bin/env bash
 #Build Image for Dragino2.  
 
-USAGE="Usage: . ./build_image.sh /source/installation/path application"
 
-if (( $# < 1 ))
-then
-	echo "Error. Not enough arguments."
-	echo $USAGE
-	exit 1
-elif (( $# > 2 ))
-then
-	echo "Error. Too many arguments."
-	echo $USAGE
-	exit 2
-elif [ $1 == "--help" ]
-then
-	echo $USAGE
-	exit 3
-fi
+SFLAG=
+AFLAG=
+
+APP=IoT
+VERSION=1.3.4
+OPENWRT_PATH="ms14"
+
+while getopts 'a:p:v:sh' OPTION
+do
+	case $OPTION in
+	a)	
+		AFLAG=1
+		APP="$OPTARG"
+		;;
+
+	p)	OPENWRT_PATH="$OPTARG"
+		;;
+
+	v)	VERSION="$OPTARG"
+		;;
+
+	s)	SFLAG=1
+		;;
+
+	h|?)	printf "Build Image for Dragino2 \n\n"
+		printf "Usage: %s [-p <openwrt_source_path>] [-a <application>]  [-v <version>] [-s] \n" $(basename $0) >&2
+		printf "	-s: build in singe thread\n"
+		printf "\n"
+		exit 1
+		;;
+	esac
+done
+
+shift $(($OPTIND - 1))
 
 REPO_PATH=$(pwd)
-OPENWRT_PATH=$1
-APP=IoT
-if [ $2 ];then 
-	APP=$2
+
+if [ ! -z $AFLAG ];then 
 	if [ -d files-$APP ] || [ -f .config.$APP ]; then
 		#########################
 		echo ''
@@ -39,7 +55,6 @@ if [ $2 ];then
 	fi
 fi
 
-VERSION=1.3.4
 BUILD=$APP-$VERSION
 BUILD_TIME="`date`"
 
@@ -85,16 +100,21 @@ echo ""
 make defconfig > /dev/null
 
 echo ""
-echo "***Run make for ms14***"
-make -j8 V=99
+if [ ! -z $SFLAG ];then
+	echo "***Run make for dragion2 in single thread ***"
+	make V=s
+else
+	echo "***Run make for dragion2***"
+	make -j8 V=99
+fi
+
 
 
 if [ ! -f ./bin/ar71xx/openwrt-ar71xx-generic-dragino2-squashfs-sysupgrade.bin ];then
 	echo ""
 	echo "Build Fails, run below commands to build the image in single thread and check what is wrong"
 	echo "**************"
-	echo "	cd ms14"
-	echo "	make V=s"
+	echo "	./build_image.sh -s"
 	echo "**************"
 	exit
 fi
