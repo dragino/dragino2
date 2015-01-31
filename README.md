@@ -55,7 +55,8 @@ To customize default files
 #create default files in TOP dir
 mkdir files-mybuild
 #put files into this directory. 
-#for example, if user want the final build has a default config file /etc/config/network. user can put /etc/config/network into the files-mybuild directory (include directory /etc and /etc/config)
+#for example, if user want the final build has a default config file /etc/config/network. user can 
+#put /etc/config/network into the files-mybuild directory (include directory /etc and /etc/config)
 ```
 
 Then run the customzied build by running:
