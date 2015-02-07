@@ -6,7 +6,7 @@ SFLAG=
 AFLAG=
 
 APP=IoT
-VERSION=1.3.4
+VERSION=1.3.5
 OPENWRT_PATH="ms14"
 
 while getopts 'a:p:v:sh' OPTION
@@ -98,6 +98,8 @@ echo "***Activate $APP config as default config***"
 echo " Run defconfig"
 echo ""
 make defconfig > /dev/null
+
+rm ./bin/ar71xx/openwrt-ar71xx-generic-dragino2-squashfs-sysupgrade.bin
 
 echo ""
 if [ ! -z $SFLAG ];then
