@@ -15,7 +15,8 @@ How to compile the image?
 git clone https://github.com/dragino/dragino2.git dragino2-AA-IoT
 cd dragino2-AA-IoT
 ./set_up_build_enviroment.sh ms14
-./build_image.sh ms14
+#build default IoT App on MS14 directory
+./build_image.sh   
 ```
 
 After complination, the images can be found on **dragino2-AA-IoT/image** folder. The folder includes:
@@ -25,14 +26,44 @@ After complination, the images can be found on **dragino2-AA-IoT/image** folder.
 *md5sum  md5sum for above files
 *custom_config Customized files and config for this build , as a back up
 
+More build option can be viewed by running:
+``` bash
+./build_image.sh -h
+```
+
 How to debug if build fails?
 ===============
 ``` bash
-cd dragino2-AA-IoT/ms14
-make V=s
+./build_image.sh -s
 ```
 Above commands will enable verbose and build in single thread to get a view of the error during build. 
 
+
+How to customized a build?
+===============
+As a example, if user want to customize a build named mybuild. mybuild include different packages and default files from the default build. User can do as below:
+To customize the packages 
+``` bash
+cd ms14
+# run make menuconfig to select the packages and save
+make menuconfig
+#Copy the new config to TOP dir and rename it to .config.mybuild
+cp .config .config.mybuild
+```
+To customize default files
+``` bash
+#create default files in TOP dir
+mkdir files-mybuild
+#put files into this directory. 
+#for example, if user want the final build has a default config file /etc/config/network. user can 
+#put /etc/config/network into the files-mybuild directory (include directory /etc and /etc/config)
+```
+
+Then run the customzied build by running:
+``` bash
+./build_image.sh -a mybuild
+```
+The build process will auto overwrite the default files or pacakges with the customized one. User can customize only default files or pacakges. The build will use the default from IoT build if not specify. 
 
 Have Fun!
 
