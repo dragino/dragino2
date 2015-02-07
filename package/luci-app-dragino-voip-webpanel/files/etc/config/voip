@@ -1,0 +1,32 @@
+
+config settings 'asterisk'
+	option codec1 'gsm'
+	option codec2 'ulaw'
+	option codec3 'alaw'
+	option externip '0.0.0.0'
+	option enablenat '0'
+	option enableast '1'
+	option extension_digits '4'
+	option extension_prefix '8'
+
+config settings 'featurecode'
+	option ivr_pin '1234'
+	option dialout '#'
+
+config settings 'sip_server'
+	option enablesip '0'
+	option register '0'
+	option host 'sip.mysipserver.com'
+	option sip_port '5060'
+	option fromdomain 'sip.mysipserver.com'
+	option username 'myusername'
+	option secret 'mysecret'
+	option fromusername 'myusername'
+
+config clients
+        option username '8000'
+        option password '8000'
+        option number '8000'
+        option ext_type 'analog'	
+
+

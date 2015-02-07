@@ -1,0 +1,87 @@
+<%#
+LuCI - Lua Configuration Interface
+Copyright 2008 Steven Barth <steven@midlink.org>
+Copyright 2008-2011 Jo-Philipp Wich <xm@subsignal.org>
+Copyright 2015 Dragino Tech <info@dragino.com>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+-%>
+<%
+local ami = require 'dragino.asterisk_ami'
+if luci.http.formvalue("status") == "1" then
+	rv = ami.get_status_all()
+	luci.http.prepare_content("application/json")
+	luci.http.write_json(rv)
+
+	return
+end
+-%>
+
+<%+header%>
+
+<script type="text/javascript" src="<%=resource%>/cbi.js"></script>
+<script type="text/javascript">//<![CDATA[
+	XHR.poll(5, '<%=REQUEST_URI%>', { status: 1 },
+		function(x, info)
+		{
+			var ls = document.getElementById('server_table');
+			if (ls)
+			{
+				/* clear all rows */
+				while( ls.rows.length > 1 )
+					ls.rows[0].parentNode.deleteRow(1);
+			
+				for( var i = 0; i < info.ssr.length; i++ )
+				{			
+					var tr = ls.rows[0].parentNode.insertRow(-1);
+					tr.className = 'cbi-section-table-row cbi-rowstyle-' + ((i % 2) + 1);
+					tr.insertCell(-1).innerHTML = info.ssr[i].host + ":" + info.ssr[i].port;
+					tr.insertCell(-1).innerHTML = info.ssr[i].username;
+					tr.insertCell(-1).innerHTML = info.ssr[i].domain + ":" + info.ssr[i].domainport;	
+					tr.insertCell(-1).innerHTML = info.ssr[i].regflag;
+					tr.insertCell(-1).innerHTML = info.ssr[i].state;
+					tr.insertCell(-1).innerHTML = info.ssr[i].regtime;
+				}
+				
+				if( ls.rows.length == 1 )
+				{
+					var tr = ls.rows[0].parentNode.insertRow(-1);
+						tr.className = 'cbi-section-table-row';
+
+					var td = tr.insertCell(-1);
+						td.colSpan = 7;
+						td.innerHTML = '<em><br /><%:There are no server info%></em>';
+				}
+			}
+		}
+	);
+//]]></script>
+
+
+<h2><a id="content" name="content"><%:VoIP Status%></a></h2>
+
+<fieldset class="cbi-section">
+	<legend><%:Outgoing Server Status%></legend>
+
+	<table class="cbi-section-table" id="server_table">
+		<tr class="cbi-section-table-titles">
+			<th class="cbi-section-table-cell"><%:Host%></th>
+			<th class="cbi-section-table-cell"><%:UserName%></th>
+			<th class="cbi-section-table-cell"><%:Domain%></th>
+			<th class="cbi-section-table-cell"><%:Enable Reg?%></th>
+			<th class="cbi-section-table-cell"><%:State%></th>
+			<th class="cbi-section-table-cell"><%:Register Time%></th>
+			<th class="cbi-section-table-cell"><%:Dial Prefix%></th>
+		</tr>
+		<tr class="cbi-section-table-row">
+			<td colspan="7"><em><br /><%:Collecting data...%></em></td>
+		</tr>
+	</table>
+</fieldset>
+
+<%+footer%>
