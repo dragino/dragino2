@@ -9,20 +9,6 @@ config settings 'asterisk'
 	option extension_digits '4'
 	option extension_prefix '8'
 
-config settings 'featurecode'
-	option ivr_pin '1234'
-	option dialout '#'
-
-config settings 'sip_server'
-	option enablesip '0'
-	option register '0'
-	option host 'sip.mysipserver.com'
-	option sip_port '5060'
-	option fromdomain 'sip.mysipserver.com'
-	option username 'myusername'
-	option secret 'mysecret'
-	option fromusername 'myusername'
-
 config clients
         option username '8000'
         option password '8000'

@@ -65,6 +65,7 @@ function SIPshowregistry(value)
 			t[registry_number]["refresh"] = string.match(entry, "Refresh: (.-)\r\n")
 			t[registry_number]["state"] = string.match(entry, "State: (.-)\r\n")
 			t[registry_number]["regtime"] = string.match(entry, "RegistrationTime: (.-)\r\n")
+			entry = ''
 		end
 		cur_entry_line = cur_entry_line + 1
 	end
@@ -134,8 +135,6 @@ function get_status_all()
 	client:close()
 	return sta
 end
-
---dragino_utility.tabledump(get_status_all())
 
 
 return M

@@ -9,14 +9,18 @@ do
 	EXT_DIAL=${EXT_DIAL}X
 done
 
-DIALOUT=`uci get voip.featurecode.dialout`
-
 ANALOG_FLAG=";"
-ANALOG_NUMBER=$1
+ANALOG_NUMBER=
+#Get Analog Number
+USER_LIST=`uci show voip | grep '=clients' | awk '{gsub(/voip./,"")} {gsub(/=clients/,"")} {print $1}'`
+for client in $USER_LIST; do
+	# check if its type is clients
+	if [ `uci get voip.$client` == "clients" ] && [ `uci get voip.$client.ext_type` == "analog" ] ;then
+		ANALOG_NUMBER=`uci get voip.$client.number`
+		ANALOG_FLAG=
+	fi
+done
 
-if [ ! -z "$ANALOG_NUMBER" ]; then
-	ANALOG_FLAG=""
-fi
 
 # Create 'dragino.extensions.conf' include file
 # Everything from here to EOF will be written to the file
@@ -40,24 +44,71 @@ $ANALOG_FLAG exten => s,1,Dial(dahdi/1)
 
 $ANALOG_FLAG exten => $ANALOG_NUMBER,1,Dial(dahdi/1) 
 
-; Make calls using a SIP host [sipaccount] 
-; Dial $DIALOUT for access, and then required number string
-
-[outgoing-vsp]
-exten => _$DIALOUT.,1,Dial(SIP/\${EXTEN:1}@sipaccount,120,r)
 
 ; Make calls to Softphone extensions 
 ; Device is Softphone Master (SIP server) or Client (only if FXS present e.g. MP)
 
 [outgoing-softphone]
 ; For the Master device
-$SOFTPHMASTER exten => _$EXT_DIAL,1,Dial(SIP/\${EXTEN})
+$SOFTPHMASTER exten => _$EXT_DIAL,1,Dial(SIP/\${EXTEN}&IAX2/\${EXTEN})
 
 ; For the Client device
 $SOFTPHCLIENT exten => _$EXT_DIAL,1,Dial(SIP/\${EXTEN}@$SOFTPHMASTERIP, 120, r)
 
 ;-------------------------------
 
-
 EOF
 # ------------------------------------------------------------------
+
+
+# Add Dial Rules to 
+# Add clients to dragino.extensions.conf file 
+DIAL_RULE_LIST=`uci show dial-rules | grep '=rule' | awk '{gsub(/dial-rules./,"")} {gsub(/=rule/,"")} {print $1}'`
+RULE=""
+echo "; Make calls using outgoing trunk "  >> /etc/asterisk/dragino.extensions.conf
+echo "[outgoing-vsp]" >> /etc/asterisk/dragino.extensions.conf
+for rule in $DIAL_RULE_LIST; do
+	#Get Rule Parameter
+	PATTERN=`uci get dial-rules.$rule.pattern`
+	PREFIX=`uci get dial-rules.$rule.prefix`
+	if [ -z `uci get dial-rules.$rule.offset` ];then
+		OFFSET=
+	else
+		OFFSET=":`uci get dial-rules.$rule.offset`"
+	fi
+
+	if [ -z `uci get dial-rules.$rule.length` ];then
+		LENGTH=
+	else
+		LENGTH=":`uci get dial-rules.$rule.length`"
+	fi
+	
+	echo $rule
+	SUFFIX=`uci get dial-rules.$rule.suffix`
+	echo $SUFFIX
+	TRUNK=`uci get dial-rules.$rule.trunk`	
+	PRO=`uci get dial-rules.$rule.protocol`
+	# add dial rule
+		echo $PRO
+	if [ ${PRO} == "SIP" ]; then
+		echo "exten => $PATTERN,1,Dial(${PRO}/${PREFIX}\${EXTEN${OFFSET}${LENGTH}}${SUFFIX}@${TRUNK},120,r)" >> /etc/asterisk/dragino.extensions.conf
+	elif [ $PRO == "IAX2" ]; then
+		SERVER_LIST=`uci show voip | grep '=server' | awk '{gsub(/voip./,"")} {gsub(/=server/,"")} {print $1}'`
+		for server in $SERVER_LIST; do
+		# check if its namd is trunk
+			if [ `uci get voip.$server` == "server" ] && [ `uci get voip.$server.name` == "${TRUNK}" ] ;then
+				USER=`uci get voip.$server.username`
+				SECRET=`uci get voip.$server.secret`
+				HOST=`uci get voip.$server.host`
+				echo "exten => $PATTERN,1,Dial(${PRO}/${USER}:${SECRET}@${HOST}/${PREFIX}\${EXTEN${OFFSET}${LENGTH}}${SUFFIX},120,r)" >> /etc/asterisk/dragino.extensions.conf
+			fi
+		done	
+	fi
+	
+	# remove blank rule
+	if [ -z `uci get dial-rules.$rule.pattern` ]; then
+		uci delete dial-rules.$rule
+	fi
+done
+
+uci commit dial-rules
