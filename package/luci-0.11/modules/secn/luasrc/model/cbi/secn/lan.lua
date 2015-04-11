@@ -46,6 +46,10 @@ au.enabled  = "checked"
 au.disabled = "unchecked"
 au.default  = au.disable
 
+local gw = s:option(Value, "gateway", "LAN Gateway")
+gw.datatype = "ipaddr"
+gw.default  = "255.255.255.255"
+
 local nm = s:option(Value, "subnet", "Subnet Mask")
 nm:depends("enable","checked")
 nm:value("255.255.255.0")

@@ -6,7 +6,7 @@ SFLAG=
 AFLAG=
 
 APP=IoT
-VERSION=1.3.5
+VERSION=1.3.6
 OPENWRT_PATH="ms14"
 
 while getopts 'a:p:v:sh' OPTION

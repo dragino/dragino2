@@ -68,8 +68,7 @@ function mbssid.write(self,section,value)
 	m.uci:set("wireless","ah_0","bssid",value)
 end
 
-s = m:section(NamedSection, "mpgw", "secn", translate("Mesh Gateway"))
-local gwmode= s:option(ListValue, "mode", "Gateway Mode")
+local gwmode= s:option(ListValue, "mpgw", "Gateway Mode")
 gwmode:value("OFF","OFF")
 gwmode:value("CLIENT","CLIENT")
 gwmode:value("SERVER","SERVER")

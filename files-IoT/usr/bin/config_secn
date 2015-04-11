@@ -69,6 +69,7 @@ OPTION_DNS=`uci get secn.dhcp.dns`
 OPTION_DNS2=`uci get secn.dhcp.dns2`
 OPTION_SUBNET=`uci get secn.dhcp.subnet`
 OPTION_ROUTER=`uci get secn.dhcp.router`
+LANGATEWAY=`uci get secn.dhcp.gateway`
 
 uci set dhcp.setup.dhcpleasemax=$MAXLEASES
 uci set dhcp.setup.domain=$DOMAIN
@@ -121,7 +122,8 @@ uci set network.wan.type=''
 # Set up for WAN disabled
 if [ $WANPORT = "Disable" ]; then
 	uci set network.lan.ifname='eth0'
-
+	uci set network.lan.gateway=$LANGATEWAY
+	
 	uci set network.wan.ifname=''
 	uci set network.wan.proto=''
 	uci set network.wan.ipaddr=''
@@ -145,7 +147,7 @@ fi
 if [ $WANPORT = "Ethernet" ]; then
  	# Set up for Eth WAN port
 	uci set network.lan.ifname='eth0'   # This is just a dummy
-	uci set network.lan.gateway='255.255.255.255'
+	uci set network.lan.gateway=$LANGATEWAY
 	uci set network.wan.ifname='eth1' # Single Eth port devices
 	uci set wireless.sta_0.disabled='1'
 fi
@@ -158,7 +160,7 @@ if [ $WANPORT = "Mesh" ]; then
 	uci set network.wan.type='bridge' # Reqd. See /etc/init.d/set-mesh-gw-mode
 	MESH_ENABLE='1'
 	uci set secn.mesh.mesh_enable='1'
-	uci set network.lan.gateway='255.255.255.255'
+	uci set network.lan.gateway=$LANGATEWAY
 
 	# Disable WiFi Client mode 
 	uci set wireless.sta_0.disabled='1'
@@ -167,7 +169,7 @@ fi
 #### Use WiFi Client mode for Internet Access
 if [ $WANPORT = "WiFi" ]; then
 	uci set network.lan.ifname='eth0'
-	uci set network.lan.gateway='255.255.255.255'
+	uci set network.lan.gateway=$LANGATEWAY
 
 
     	# Set up for wlan0 WAN port
@@ -226,7 +228,7 @@ fi
 # Set up for 3G Modem
 if [ $WANPORT = "USB-Modem" ]; then
 	uci set network.lan.ifname='eth0 eth1'
-	uci set network.lan.gateway='255.255.255.255'
+	uci set network.lan.gateway=$LANGATEWAY
 	uci set network.wan.ifname='ppp0'
 	uci set network.wan.proto='3g'
 	uci set network.wan.service=$SERVICE

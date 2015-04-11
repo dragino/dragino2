@@ -73,7 +73,7 @@ end
 --Get USB Modem
 --@return USB Manufacture, Vendor ID and Product ID
 function getUSBInfo()
-	local USB_INFO=util.exec('cat /proc/bus/usb/devices | grep -A 1 "P:  Vendor"')
+	local USB_INFO=util.exec('cat /sys/kernel/debug/usb/devices | grep -A 1 "P:  Vendor"')
 	local start = string.find(USB_INFO,"%-%-")
 	if start == nil then return nil end
 	u_man=string.match(USB_INFO,"Manufacturer=([%w%s%.%_]+[%w])",start)
