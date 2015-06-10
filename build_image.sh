@@ -103,10 +103,10 @@ rm ./bin/ar71xx/openwrt-ar71xx-generic-dragino2-squashfs-sysupgrade.bin
 
 echo ""
 if [ ! -z $SFLAG ];then
-	echo "***Run make for dragion2 in single thread ***"
+	echo "***Run make for dragino2 in single thread ***"
 	make V=s
 else
-	echo "***Run make for dragion2***"
+	echo "***Run make for dragino2***"
 	make -j8 V=99
 fi
 
