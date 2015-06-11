@@ -1,0 +1,8 @@
+
+config settings 'rfgateway'
+	option frequency '1'
+	option module '2'
+	option speed '55555'
+	option nodeid '1'
+	option groupid '69'
+
