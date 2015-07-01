@@ -68,7 +68,7 @@ if [ -d files-$APP ];then
 	rm -rf $OPENWRT_PATH/files
 	echo "Copy files-$APP to default files directory"
 	echo ""
-	cp -r files-$APP $OPENWRT_PATH/files
+	cp -Hr files-$APP $OPENWRT_PATH/files
 else 
 	echo ""
 fi
