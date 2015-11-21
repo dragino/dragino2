@@ -1,5 +1,8 @@
-IoT Mesh -- A Generic OpenWrt Version with mesh, IoT, VoIP support for Dragino Devices
+IoT Mesh -- A Generic OpenWrt Version with mesh, IoT, VoIP support for Dragino Devices (obsolete)
 ===============
+
+This repository is base on OpenWrt Attitude Adjustment 12.09. the newest source is moved to OpenWrt Barrier Breaker 14.07 at this link: [BB Source](https://github.com/dragino/openwrt-bb-1407). Please use new link for development.
+
 This repository is a generic OpenWrt version from Dragino devices such as:
 [MS14](http://www.dragino.com/products/mother-board.html), [HE](http://www.dragino.com/products/linux-module/item/87-he.html) and [Yun Shield](http://www.dragino.com/products/yunshield.html).
 
